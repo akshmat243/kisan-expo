@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #10b981;
+        }
+
+        body {
+            background-color: #f8fafc;
+        }
+
+        .login-container {
+            min-height: 100vh;
+        }
+
+        .login-card {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-login {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .social-btn {
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .google-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        .github-btn:hover {
+            background-color: #24292e;
+            color: white;
+        }
+
+        .twitter-btn:hover {
+            background-color: #1da1f2;
+            color: white;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .wave {
+            animation: wave 8s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .error-message {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes moveWave {
+        0% { background-position-x: 0; }
+        100% { background-position-x: 1000px; }
+        }
+
+        .wave-bg {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.2)' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'/%3E%3C/svg%3E");
+        background-repeat: repeat-x;
+        background-size: cover;
+        animation: moveWave 10s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="login-card bg-white rounded-xl overflow-hidden">
+                <!-- Decorative Header -->
+                <div class="relative h-32 bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                    <div class="absolute inset-0 overflow-hidden">
+                        <div class="wave-bg absolute bottom-0 left-0 w-full h-24"></div>
+                    </div>
+                    <div class="relative z-10 text-center">
+                        <h1 class="text-3xl font-bold text-white">Welcome Back</h1>
+                        <p class="text-indigo-100 mt-2">Sign in to your account</p>
+                    </div>
+                </div>
+{% if messages %}
+<div id="errorContainer">
+    <div class="error-message bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+        {% for message in messages %}
+            <p id="errorMessage">{{ message }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+                <!-- Login Form -->
+                <div class="p-8">
+                    <form id="loginForm" class="space-y-6" method="post">
+                        {% csrf_token %}
+                        <div id="errorContainer" class="hidden">
+                            <div class="error-message bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                                <p id="errorMessage"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" id="email" name="email" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="password" name="password" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="••••••••">
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember-me" name="remember-me" type="checkbox"
+                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                            </div>
+
+                            <div class="text-sm">
+                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn-login w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <div class="wave-bg absolute bottom-0 left-0 w-full h-24"></div>
+                                Sign in
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-6">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-3 gap-3">
+                            <div>
+                                <a href="#" class="social-btn google-btn w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                    <i class="fab fa-google text-red-500"></i>
+                                </a>
+                            </div>
+
+                            <div>
+                                <a href="#" class="social-btn github-btn w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-800">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                            </div>
+
+                            <div>
+                                <a href="#" class="social-btn twitter-btn w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-blue-400">
+                                    <i class="fab fa-twitter text-blue-400"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Don't have an account?
+                            <a href="{% url 'register' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500">
+                    &copy; 2025 Your Company. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+{% comment %} 
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // Form validation
+        const loginForm = document.getElementById('loginForm');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if (!email || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 1) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+            
+            // If validation passes, submit the form
+            alert('Login successful!');
+            // In a real app, you would send the data to your server here
+            // loginForm.submit();
+        });
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorContainer.classList.remove('hidden');
+            
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorContainer.classList.add('hidden');
+            }, 5000);
+        }
+    </script> {% endcomment %}
+</body>
+</html>

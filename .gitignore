@@ -1,0 +1,30 @@
+# Python-related
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# SQLite database
+db.sqlite3
+
+# Django migrations
+**/migrations/
+!**/migrations/__init__.py  # keep the init file so Django detects the package
+
+# Virtual environment (if inside project folder)
+.venv/
+env/
+
+# VSCode or other IDE/editor config
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Compiled files
+*.log
+*.pot
+*.pyc
+.DS_Store
+*.sqlite3

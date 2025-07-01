@@ -1,0 +1,473 @@
+{% load static %}
+{% load custom_filters %}
+{% has_perm request.user 'User' 'r' as can_read_user %}
+{% has_perm request.user 'Role' 'r' as can_read_role %}
+{% has_perm request.user 'PermissionType' 'r' as can_read_permission %}
+{% has_perm request.user 'AuditLog' 'r' as can_read_logs %}
+<!-- Role -->
+{% has_perm request.user 'Role' 'c' as can_create_role %}
+{% has_perm request.user 'Role' 'd' as can_delete_role %}
+{% has_perm request.user 'Role' 'u' as can_update_role %}
+{% has_perm request.user 'RoleModelPermission' 'r' as can_read_roles %}
+{% has_perm request.user 'RoleModelPermission' 'c' as can_create_roles %}
+<!-- User -->
+{% has_perm request.user 'User' 'c' as can_create_user %}
+{% has_perm request.user 'User' 'd' as can_delete_user %}
+{% has_perm request.user 'User' 'u' as can_update_user %}
+<!-- Permission -->
+{% has_perm request.user 'PermissionType' 'c' as can_create_permission %}
+{% has_perm request.user 'PermissionType' 'd' as can_delete_permission %}
+{% has_perm request.user 'PermissionType' 'u' as can_update_permission %}
+<!-- Audit Logs -->
+{% has_perm request.user 'AuditLog' 'd' as can_delete_log %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 280px;
+            min-height: 100vh;
+            background: white;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: fixed;
+            z-index: 10;
+        }
+
+        .sidebar-collapsed {
+            width: 80px;
+        }
+
+        .sidebar-collapsed .sidebar-text {
+            display: none;
+        }
+
+        .sidebar-collapsed .logo-text {
+            display: none;
+        }
+
+        .sidebar-item {
+            position: relative;
+            transition: all 0.3s ease;
+            padding-left: 1.5rem;
+        }
+
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-item:hover::before {
+            width: 4px;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f5f3ff;
+        }
+
+        .sidebar-item.active {
+            background-color: #eef2ff;
+        }
+
+        .sidebar-item.active::before {
+            width: 4px;
+        }
+
+        .sidebar-item.active .sidebar-icon {
+            color: var(--primary);
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+        }
+
+        .main-content-expand {
+            margin-left: 80px;
+        }
+
+        /* Header styles */
+        .header {
+            height: 70px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Profile dropdown */
+        .profile-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            min-width: 200px;
+            z-index: 20;
+        }
+
+        .profile-toggle:focus-within .profile-menu,
+        .profile-toggle:hover .profile-menu {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 30;
+            }
+
+            .sidebar-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .main-content-expand {
+                margin-left: 0;
+            }
+
+            .sidebar-collapsed {
+                width: 280px;
+            }
+
+            .sidebar-collapsed .sidebar-text,
+            .sidebar-collapsed .logo-text {
+                display: inline;
+            }
+        }
+
+        /* Circle animation */
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Hamburger animation */
+        .hamburger div {
+            width: 24px;
+            height: 2px;
+            background-color: var(--dark);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-active div:first-child {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .hamburger-active div:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-active div:last-child {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="bg-green-100">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-green-50" id="sidebar">
+        <div class="p-4 flex items-center justify-between border-b bg-green-300">
+            <div class="flex items-center">
+                <img src="{% static 'logo.png' %}" alt="Kisan Expo Logo" class="w-8 h-8">
+                <span class="logo-text text-xl font-bold ml-2 text-gray-800">Kisan Expo</span>
+            </div>
+            <button id="toggle-sidebar" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <div class="p-4">
+            <ul class="space-y-1">
+                <li>
+                    <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'dashboard' %}
+                    active
+                    {% else %}
+                    text-gray-600
+                    {% endif %}">
+                        <i class="sidebar-icon fas fa-tachometer-alt text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Dashboard</span>
+                    </a>
+                </li>
+                {% if can_read_user %}
+                <li>
+                    <a href="{% url 'user_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'user_list' %}
+                    active
+                    {% else %}
+                    text-gray-600
+                    {% endif %}">
+                        <i class="sidebar-icon fas fa-users text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Users</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if can_read_role %}
+                <li>
+                    <a href="{% url 'role_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'role_list' %}
+                    active
+                    {% else %}
+                    text-gray-600
+                    {% endif %}">
+                        <i class="sidebar-icon fas fa-user-tie text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Roles</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if can_read_permission %}
+                <li>
+                    <a href="{% url 'permission_type_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'permission_type_list' %}
+                    active
+                    {% else %}
+                    text-gray-600
+                    {% endif %}">
+                        <i class="sidebar-icon fa-solid fa-user-shield text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Permissions</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if can_read_logs %}
+                <li>
+                    <a href="{% url 'audit_log_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'audit_log_list' %}
+                    active
+                    {% else %}
+                    text-gray-600
+                    {% endif %}">
+                        <i class="sidebar-icon fa-solid fa-history text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Audit Logs</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600">
+                        <i class="sidebar-icon fas fa-box text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600">
+                        <i class="sidebar-icon fas fa-file-invoice-dollar text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3">Orders</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <!-- Header -->
+        <header class="header flex items-center justify-between px-6 bg-green-50">
+            <!-- Mobile menu button -->
+            <button id="mobile-menu-button" class="hamburger md:hidden focus:outline-none">
+                <div></div>
+                <div></div>
+                <div></div>
+            </button>
+            
+            <!-- Search bar -->
+            <div class="hidden md:flex items-center bg-gray-100 rounded-lg px-4 py-2 flex-1 max-w-md mx-4">
+                <i class="fas fa-search text-gray-500 mr-2"></i>
+                <input type="text" placeholder="Search..." class="bg-transparent border-none focus:outline-none w-full">
+            </div>
+            
+            <!-- Right side icons -->
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-500 hover:text-gray-700 relative focus:outline-none">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <!-- Profile dropdown -->
+                <div class="profile-toggle relative">
+                    <button class="flex items-center focus:outline-none">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-8 h-8 rounded-full border-2 border-white">
+                        <span class="ml-2 text-gray-700 hidden md:inline">{{ request.user.full_name|default:request.user.email }}</span>
+                        <i class="fas fa-chevron-down text-xs ml-1 text-gray-500 hidden md:inline"></i>
+                    </button>
+                    
+                    <div class="profile-menu mt-2 py-2">
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-user mr-2"></i> Profile
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-2"></i> Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+{% if messages %}
+  <div id="notification" class="fixed top-20 right-6 px-4 py-2 rounded shadow-md z-50 hidden transition-all duration-500 ease-in-out opacity-0">
+    {% for message in messages %}
+      <span id="notification-text" data-level="{{ message.tags }}">{{ message }}</span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% block content %}
+        <!-- Page content -->
+        <main class="p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+            <!-- Your Django template content would go here -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <p class="text-gray-600">Welcome to your Django admin dashboard. This is where your main content will appear.</p>
+            </div>
+        </main>
+    </div>
+{% endblock %}
+    <script>
+        // Toggle sidebar collapse/expand
+        const toggleSidebar = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-collapsed');
+            mainContent.classList.toggle('main-content-expand');
+            
+            // Change the icon based on state
+            const icon = toggleSidebar.querySelector('i');
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open');
+            mobileMenuButton.classList.toggle('hamburger-active');
+        });
+
+        // Close mobile menu when clicking on a nav item
+        const navItems = document.querySelectorAll('.sidebar-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('sidebar-open');
+                    mobileMenuButton.classList.remove('hamburger-active');
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const notification = document.getElementById('notification');
+        const textEl = document.getElementById('notification-text');
+
+        if (notification && textEl) {
+            const level = textEl.dataset.level; // success, error, warning, info
+            const message = textEl.textContent;
+
+            // Set background color based on message level
+            notification.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500');
+
+            switch (level) {
+                case 'success':
+                    notification.classList.add('bg-green-500');
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500');
+                    break;
+                case 'warning':
+                    notification.classList.add('bg-yellow-500', 'text-black');
+                    break;
+                case 'info':
+                    notification.classList.add('bg-blue-500');
+                    break;
+                default:
+                    notification.classList.add('bg-gray-800');
+            }
+
+            // Show notification
+            notification.classList.remove('hidden', 'opacity-0');
+            notification.classList.add('opacity-100');
+
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('opacity-100');
+                notification.classList.add('opacity-0');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 500); // match the transition duration
+            }, 3000);
+        }
+    });
+</script>
+<input type="hidden" id="clientTime" name="client_time">
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('clientTime');
+        if (input) {
+            const now = new Date().toISOString();  // Format: 2025-06-28T08:03:00.000Z
+            input.value = now;
+        }
+    });
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #10b981;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .register-container {
+            min-height: 100vh;
+        }
+
+        .register-card {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .register-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-register {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .password-strength {
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-weak {
+            background-color: #ef4444;
+            width: 25%;
+        }
+
+        .progress-medium {
+            background-color: #f59e0b;
+            width: 50%;
+        }
+
+        .progress-strong {
+            background-color: #10b981;
+            width: 75%;
+        }
+
+        .progress-very-strong {
+            background-color: #10b981;
+            width: 100%;
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .wave {
+            animation: wave 8s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .error-message {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        @keyframes moveWave {
+        0% { background-position-x: 0; }
+        100% { background-position-x: 1000px; }
+        }
+
+        .wave-bg {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='rgba(255,255,255,0.2)' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'/%3E%3C/svg%3E");
+        background-repeat: repeat-x;
+        background-size: cover;
+        animation: moveWave 10s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="register-container flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="register-card bg-white rounded-xl overflow-hidden">
+                <!-- Decorative Header -->
+                <div class="relative h-32 bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
+                    <div class="absolute inset-0 overflow-hidden">
+                        <div class="wave-bg absolute bottom-0 left-0 w-full h-24"></div>                    
+                    </div>
+                    <div class="relative z-10 text-center">
+                        <h1 class="text-3xl font-bold text-white">Create Account</h1>
+                        <p class="text-indigo-100 mt-2">Join our community today</p>
+                    </div>
+                </div>
+{% if messages %}
+<div id="errorContainer">
+    <div class="error-message bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+        {% for message in messages %}
+            <p id="errorMessage">{{ message }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+                <!-- Registration Form -->
+                <div class="p-8">
+                    <form id="registerForm" class="space-y-4" method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+                        <div id="errorContainer" class="hidden">
+                            <div class="error-message bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                                <p id="errorMessage"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input type="text" id="firstName" name="full_name" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="John Doe">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" id="email" name="email" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="password" name="password1" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="••••••••">
+                                <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                                </button>
+                            </div>
+                            <div class="mt-1 flex items-center justify-between">
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div id="passwordStrength" class="password-strength rounded-full h-1"></div>
+                                </div>
+                                <span id="strengthText" class="ml-2 text-xs text-gray-500"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" id="confirmPassword" name="password2" required
+                                    class="input-field pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                                    placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn-register w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                Create Account
+                                <div class="wave-bg absolute bottom-0 left-0 w-full h-24"></div>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Already have an account?
+                            <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Sign in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500">
+                    &copy; 2025 Your Company. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+{% comment %} 
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // Password strength indicator
+        password.addEventListener('input', function() {
+            const strength = calculatePasswordStrength(this.value);
+            const strengthBar = document.getElementById('passwordStrength');
+            const strengthText = document.getElementById('strengthText');
+            
+            strengthBar.className = 'password-strength rounded-full h-1';
+            
+            switch(strength) {
+                case 1:
+                    strengthBar.classList.add('progress-weak');
+                    strengthText.textContent = 'Weak';
+                    strengthText.className = 'ml-2 text-xs text-red-500';
+                    break;
+                case 2:
+                    strengthBar.classList.add('progress-medium');
+                    strengthText.textContent = 'Medium';
+                    strengthText.className = 'ml-2 text-xs text-yellow-500';
+                    break;
+                case 3:
+                    strengthBar.classList.add('progress-strong');
+                    strengthText.textContent = 'Strong';
+                    strengthText.className = 'ml-2 text-xs text-green-500';
+                    break;
+                case 4:
+                    strengthBar.classList.add('progress-very-strong');
+                    strengthText.textContent = 'Very Strong';
+                    strengthText.className = 'ml-2 text-xs text-green-500';
+                    break;
+                default:
+                    strengthText.textContent = '';
+            }
+        });
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Contains letters and numbers
+            if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength++;
+            
+            // Contains special chars
+            if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength++;
+            
+            return strength;
+        }
+
+        // Form validation
+        const registerForm = document.getElementById('registerForm');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Reset error container
+            errorContainer.classList.add('hidden');
+            
+            // Simple validation
+            if (!firstName || !email || !password || !confirmPassword) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            // If validation passes, submit the form
+            alert('Registration successful!');
+            // In a real app, you would send the data to your server here
+            // registerForm.submit();
+        });
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorContainer.classList.remove('hidden');
+            
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorContainer.classList.add('hidden');
+            }, 5000);
+        }
+    </script> {% endcomment %}
+</body>
+</html>

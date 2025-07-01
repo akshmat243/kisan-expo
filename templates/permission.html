@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block content%}
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Permission Management</h1>
+            {% if can_create_permission %}
+            <button  id="openCreatePermissionModal" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Create Permission
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Permission Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Permission ID
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Permission Name
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Permission Code
+                            </th>
+                            {% comment %} <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Users
+                            </th> {% endcomment %}
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for permission in permissions %}
+                        <tr class="table-row-hover fade-in">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ forloop.counter}}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ permission.name }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ permission.code }}
+                            </td>
+                            {% comment %} <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ permission.user_count }}
+                            </td> {% endcomment %}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {% if permission.is_active %}
+                                    Active
+                                    {% else %}
+                                    Inactive
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-end space-x-2">
+                                {% if can_update_permission %}
+                                <button class="btn-edit-permission bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md flex items-center"
+                                    data-permissionid="{{ permission.id }}"
+                                    data-name="{{ permission.name }}"
+                                    data-description="{{ permission.code }}"
+                                    data-status="{{ permission.is_active|yesno:'True,False' }}">
+                                    <i class="fas fa-pencil-alt mr-1"></i>
+                                    Edit
+                                </button>
+                                {% endif %}
+                                {% if can_delete_permission %}
+                                <button class="delete-permission-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center"
+                                        data-permissionid="{{ permission.id }}"
+                                        data-name="{{ permission.name }}">
+                                        <i class="fas fa-trash-alt mr-1"></i>
+                                        Delete
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination Footer -->
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Showing 
+                            <span class="font-medium">{{ page_obj.start_index }}</span>
+                            to 
+                            <span class="font-medium">{{ page_obj.end_index }}</span>
+                            of 
+                            <span class="font-medium">{{ page_obj.paginator.count }}</span>
+                            results
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% else %}
+                                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-200 bg-gray-100 text-sm font-medium text-gray-400">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <span class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                        {{ num }}
+                                    </span>
+                                {% else %}
+                                    <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% else %}
+                                <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-200 bg-gray-100 text-sm font-medium text-gray-400">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Create Permission Modal -->
+    <div id="createPermissionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Create New Permission</h3>
+                <button id="closeCreateModal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="POST" action="{% url 'create_permission_type' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="permissionName" class="block text-sm font-medium text-gray-700">Permission Name</label>
+                    <input type="text" name="name" id="permissionName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="mb-4">
+                    <label for="permissionDescription" class="block text-sm font-medium text-gray-700">Permission Code</label>
+                    <input name="code" id="permissionDescription" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., c, r, u, d">
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm">Create Permission</button>
+                    <button type="button" id="cancelCreatePermission" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 text-sm">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Permission Modal -->
+    <div id="editPermissionModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+
+        <div class="modal-content bg-white p-6 rounded shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Edit Permission</h3>
+            <button id="closeEditPermissionModal" class="text-gray-400 hover:text-gray-500">&times;</button>
+            </div>
+            
+            <form method="POST" id="editPermissionForm">
+            {% csrf_token %}
+            <input type="hidden" id="editPermissionId">
+            
+            <div class="mb-4">
+                <label for="editPermissionName" class="block text-sm font-medium text-gray-700">Permission Name</label>
+                <input type="text" name="name" id="editPermissionName" class="w-full border px-3 py-2 rounded">
+            </div>
+            
+            <div class="mb-4">
+                <label for="editPermissionDescription" class="block text-sm font-medium text-gray-700">Permission Code</label>
+                <input name="code" id="editPermissionDescription" class="w-full border px-3 py-2 rounded" placeholder="e.g., c, r, u, d">
+            </div>
+
+            <div class="mb-4">
+                <label for="editPermissionStatus" class="block text-sm font-medium text-gray-700">Status</label>
+                <select name="is_active" id="editPermissionStatus" class="w-full border px-3 py-2 rounded">
+                <option value="True">Active</option>
+                <option value="False">Inactive</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded">Update</button>
+                <button type="button" id="cancelEditPermission" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Permission Modal -->
+    <div id="deletePermissionModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="modal-content bg-white p-6 rounded shadow-lg">
+            <div class="mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Confirm Delete</h3>
+                <p class="text-sm text-gray-600">Are you sure you want to delete the permission <span id="deletePermissionName" class="font-semibold text-red-600"></span>?</p>
+            </div>
+
+            <form method="POST" id="deletePermissionForm">
+                {% csrf_token %}
+                <div class="flex justify-end space-x-3">
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                    <button type="button" id="cancelDeletePermission" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Create Permission Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("createPermissionModal");
+            const openBtn = document.getElementById("openCreatePermissionModal");
+            const closeBtn = document.getElementById("closeCreateModal");
+            const cancelBtn = document.getElementById("cancelCreatePermission");
+
+            openBtn?.addEventListener("click", () => {
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+            });
+
+            closeBtn?.addEventListener("click", () => {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            });
+
+            cancelBtn?.addEventListener("click", () => {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.classList.add("hidden");
+                    modal.classList.remove("flex");
+                }
+            });
+        });
+    </script>
+
+    <!-- Edit Permission Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editPermissionButtons = document.querySelectorAll('.btn-edit-permission');
+            const modal = document.getElementById('editPermissionModal');
+            const closeBtn = document.getElementById('closeEditPermissionModal');
+            const cancelBtn = document.getElementById('cancelEditPermission');
+
+            editPermissionButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const permissionId = this.dataset.permissionid;
+                    const name = this.dataset.name;
+                    const description = this.dataset.description;
+                    const status = this.dataset.status;
+
+                    document.getElementById('editPermissionName').value = name;
+                    document.getElementById('editPermissionDescription').value = description;
+                    document.getElementById('editPermissionStatus').value = status;
+
+                    const form = document.getElementById('editPermissionForm');
+                    form.action = `/permission-types/${permissionId}/edit/`;
+
+                    modal.classList.remove('hidden');
+                });
+            });
+
+            closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
+            cancelBtn?.addEventListener('click', () => modal.classList.add('hidden'));
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+    <!-- Delete Permission Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-permission-btn');
+            const deleteModal = document.getElementById('deletePermissionModal');
+            const deleteForm = document.getElementById('deletePermissionForm');
+            const deletePermissionName = document.getElementById('deletePermissionName');
+            const cancelBtn = document.getElementById('cancelDeletePermission');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const permissionId = this.dataset.permissionid;
+                    const permissionName = this.dataset.name;
+                    deletePermissionName.textContent = permissionName;
+                    deleteForm.action = `/permission-types/${permissionId}/delete/`;
+                    deleteModal.classList.remove('hidden');
+                });
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                deleteModal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === deleteModal) {
+                    deleteModal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

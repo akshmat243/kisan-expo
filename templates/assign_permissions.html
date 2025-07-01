@@ -1,0 +1,130 @@
+
+    <div id="permissionModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+            <h2 class="text-lg font-semibold mb-4">Assign Permission to Role</h2>
+            <form>
+                <div class="mb-4">
+                    <label for="roleName" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="permissionRoleName" disabled 
+                                    class="mt-1 border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed focus:outline-none w-full p-2">
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex space-x-4 mb-2">
+                        <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded">Staff</button>
+                        <button type="button" class="bg-gray-200 px-4 py-2 rounded">CRM</button>
+                        <button type="button" class="bg-gray-200 px-4 py-2 rounded">Project</button>
+                        <button type="button" class="bg-gray-200 px-4 py-2 rounded">HRM</button>
+                        <button type="button" class="bg-gray-200 px-4 py-2 rounded">Account</button>
+                        <button type="button" class="bg-gray-200 px-4 py-2 rounded">POS</button>
+                    </div>
+                    <h3 class="text-md font-semibold">Assign General Permission to Roles</h3>
+                </div>
+
+                <table class="min-w-full border border-gray-300">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-4 py-2">MODULE</th>
+                            <th class="border px-4 py-2" colspan="4">PERMISSIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border px-4 py-2">User</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Role</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Client</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Product & service</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Constant unit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Constant tax</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Constant category</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Company settings</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                        <tr>
+                            <td class="border px-4 py-2">Permission</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Manage</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Create</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Edit</td>
+                            <td class="border px-4 py-2"><input type="checkbox"> Delete</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mt-4 flex justify-between">
+                    <button type="button" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // Open modal on permission button click
+    document.querySelectorAll('.permission-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const roleName = this.getAttribute('data-role');
+            document.getElementById('permissionRoleName').value = roleName;
+
+            const modal = document.getElementById('permissionModal');
+            modal.classList.remove('hidden');
+        });
+    });
+
+    // Close modal on Cancel button
+    document.querySelector('#permissionModal button.bg-gray-300').addEventListener('click', function () {
+        document.getElementById('permissionModal').classList.add('hidden');
+    });
+
+    // Optional: Click outside modal to close
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('permissionModal');
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+</script>
