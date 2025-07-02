@@ -10,13 +10,12 @@ from .forms import UserRegisterForm, EmailLoginForm, UserCreateForm
 from MBP.utils import log_audit
 from MBP.utils import safe_model_to_dict
 from django.utils.timezone import now
+from dateutil.parser import parse as parse_datetime
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     return x_forwarded_for.split(',')[0] if x_forwarded_for else request.META.get('REMOTE_ADDR')
 
-from dateutil.parser import parse as parse_datetime
-from django.utils.timezone import now
 
 def get_client_time(request):
     client_time_str = request.POST.get('client_time') or request.GET.get('client_time')
@@ -33,6 +32,7 @@ def register_view(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            time = get_client_time(request)
             AuditLog.objects.create(
                 user=user,
                 action='register',
@@ -45,7 +45,7 @@ def register_view(request):
                 },
                 ip_address=get_client_ip(request),
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
-                timestamp=now()
+                timestamp=time
             )
             messages.success(request, "✅ Registration successful! Please wait for admin approval.")
             return redirect('login')

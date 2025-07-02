@@ -294,5 +294,16 @@
             }, 5000);
         }
     </script> {% endcomment %}
+
+<input type="hidden" id="clientTime" name="client_time">
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('clientTime');
+        if (input) {
+            const now = new Date().toISOString();  // Format: 2025-06-28T08:03:00.000Z
+            input.value = now;
+        }
+    });
+</script>
 </body>
 </html>
