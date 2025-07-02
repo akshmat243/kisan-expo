@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 from django.contrib import messages
 from .models import Role, PermissionType, AppModel, RoleModelPermission, AuditLog
+from django.core.exceptions import ObjectDoesNotExist
 from MBP.permission import has_model_permission
 from django.http import JsonResponse
 import json
@@ -24,8 +25,6 @@ def get_client_time(request):
     return now()
 
 
-
-
 @has_model_permission('Role', 'r')
 def role_list_view(request):
     roles = Role.objects.annotate(user_count=Count('user'))
@@ -34,7 +33,6 @@ def role_list_view(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # Fetch permissions for roles
     role_permissions = {}
 
     for role in roles:
@@ -294,7 +292,6 @@ def get_role_permissions(request):
 
     return JsonResponse(data)
 
-from django.core.exceptions import ObjectDoesNotExist
 
 @has_model_permission('RoleModelPermission', 'c')
 @csrf_exempt
