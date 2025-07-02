@@ -458,10 +458,16 @@
 </script>
 <input type="hidden" id="clientTime" name="client_time">
 <script>
+    function getISOTimeNow() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localTime = new Date(now.getTime() - offset * 60000);
+        return localTime.toISOString().slice(0, 19);
+    }
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('clientTime');
         if (input) {
-            const now = new Date().toISOString();  // Format: 2025-06-28T08:03:00.000Z
+            const now = getISOTimeNow();
             input.value = now;
         }
     });

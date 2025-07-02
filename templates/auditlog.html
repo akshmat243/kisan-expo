@@ -161,7 +161,15 @@
                                         <img class="avatar rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User avatar">
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ log.user.full_name|default:log.user.email }}</div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {% if log.user %}
+                                                {% with log.user as u %}
+                                                    {{ u.full_name|default:u.email }}
+                                                {% endwith %}
+                                            {% else %}
+                                                System Action or Anonymous
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </td>

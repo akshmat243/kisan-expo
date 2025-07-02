@@ -8,7 +8,7 @@ from .models import Role, PermissionType, AppModel, RoleModelPermission, AuditLo
 from MBP.permission import has_model_permission
 from django.http import JsonResponse
 import json
-from MBP.utils import log_audit
+from MBP.utils import log_audit, safe_model_to_dict
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from dateutil.parser import parse as parse_datetime
@@ -294,38 +294,64 @@ def get_role_permissions(request):
 
     return JsonResponse(data)
 
+from django.core.exceptions import ObjectDoesNotExist
 
 @has_model_permission('RoleModelPermission', 'c')
 @csrf_exempt
 @require_POST
 def save_role_permissions(request):
-    data = json.loads(request.body)
-    role_id = data['role_id']
-    model_id = data['model_id']
-    permission_ids = data['permission_ids']
+    try:
+        data = json.loads(request.body)
+        role_id = data.get('role_id')
+        model_id = data.get('model_id')
+        permission_ids = data.get('permission_ids', [])
 
-    role = get_object_or_404(Role, id=role_id)
-    model = get_object_or_404(AppModel, id=model_id)
+        if not role_id or not model_id:
+            return JsonResponse({'error': 'Missing role_id or model_id'}, status=400)
 
-    # Remove existing
-    RoleModelPermission.objects.filter(role=role, model=model).delete()
+        if not isinstance(permission_ids, list):
+            return JsonResponse({'error': 'permission_ids must be a list'}, status=400)
 
-    # Add new
-    for pid in permission_ids:
-        perm = get_object_or_404(PermissionType, id=pid)
-        new_permission = RoleModelPermission.objects.create(role=role, model=model, permission_type=perm)
-        time = get_client_time(request)
-        log_audit(
-                user=request.user,
-                action='create',
-                details=f"New Model_Permission Created for Role: '{role.name}'",
-                instance=new_permission,
-                new_data=model_to_dict(new_permission),
-                request=request,
-                timestamp=time
-            )
+        try:
+            role = get_object_or_404(Role, id=role_id)
+            model = get_object_or_404(AppModel, id=model_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'Invalid role or model ID'}, status=404)
 
-    return JsonResponse({'status': 'success'})
+        RoleModelPermission.objects.filter(role=role, model=model).delete()
+
+        for pid in permission_ids:
+            try:
+                perm = PermissionType.objects.get(id=pid)
+                new_permission = RoleModelPermission.objects.create(
+                    role=role,
+                    model=model,
+                    permission_type=perm
+                )
+
+                time = get_client_time(request)
+                log_audit(
+                    user=request.user,
+                    action='create',
+                    details=f"New Model_Permission Created for Role: '{role.name}'",
+                    instance=new_permission,
+                    new_data=safe_model_to_dict(new_permission),
+                    request=request,
+                    timestamp=time
+                )
+
+            except PermissionType.DoesNotExist:
+                continue
+
+        return JsonResponse({'status': 'success'})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+    except Exception as e:
+        import traceback
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 
 @has_model_permission('AuditLog', 'r')

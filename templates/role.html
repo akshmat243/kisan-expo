@@ -441,11 +441,13 @@
             </div>
         </div>
     </div>
-    <!-- Permission Modal -->
+
+    <!-- Permission Modal Script -->
     <script>
         let allApps = [];
         let allPermissions = [];
         let currentRoleId = null;
+        let currentAppLabel = null;
 
         function openPermissionModal(roleId, roleName) {
             const modal = document.getElementById('permissionModal');
@@ -466,9 +468,6 @@
                     modal.classList.remove('hidden');
                 });
         }
-
-
-        let currentAppLabel = null;
 
         function renderAppButtons(apps) {
             const appBtnContainer = document.getElementById('appButtons');
@@ -560,6 +559,12 @@
         document.querySelector('#permissionModal form')?.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Saving...';
+            }
+
             const checkboxes = document.querySelectorAll('#permissionTableBody input[type="checkbox"]');
             const modelPermMap = {};
 
@@ -588,14 +593,27 @@
                         model_id: modelId,
                         permission_ids: permissionIds
                     })
-                }).then(res => res.json());
+                })
+                .then(res => res.ok ? res.json() : Promise.resolve({ error: true }))
+                .catch(() => ({ error: true }));
 
                 saveRequests.push(req);
             }
 
-            Promise.all(saveRequests).then(() => {
-                alert("✅ Permissions updated successfully!");
-                document.getElementById('permissionModal').classList.add('hidden');
+            Promise.all(saveRequests).then(results => {
+                const failed = results.filter(r => r.error).length;
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Save';
+                }
+
+                if (failed) {
+                    alert(`⚠️ ${failed} request(s) failed to save.`);
+                } else {
+                    alert("✅ Permissions updated successfully!");
+                    document.getElementById('permissionModal').classList.add('hidden');
+                }
             });
         });
 
@@ -619,35 +637,36 @@
         });
     </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const permissionButtons = document.querySelectorAll('.view-permissions');
+    <!-- Permission Row shows Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const permissionButtons = document.querySelectorAll('.view-permissions');
 
-    permissionButtons.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const roleId = this.dataset.roleId;
-            const currentRow = document.getElementById(`permission-row-${roleId}`);
+            permissionButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const roleId = this.dataset.roleId;
+                    const currentRow = document.getElementById(`permission-row-${roleId}`);
 
-            // Hide all permission rows
-            document.querySelectorAll('.permission-row').forEach(row => {
-                if (row !== currentRow) {
-                    row.classList.add('hidden');
-                }
+                    // Hide all permission rows
+                    document.querySelectorAll('.permission-row').forEach(row => {
+                        if (row !== currentRow) {
+                            row.classList.add('hidden');
+                        }
+                    });
+
+                    // Toggle current row
+                    currentRow.classList.toggle('hidden');
+                });
             });
 
-            // Toggle current row
-            currentRow.classList.toggle('hidden');
+            // Optional: Hide permissions if clicked elsewhere
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.role-row') && !e.target.closest('.permission-row')) {
+                    document.querySelectorAll('.permission-row').forEach(row => row.classList.add('hidden'));
+                }
+            });
         });
-    });
-
-    // Optional: Hide permissions if clicked elsewhere
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.role-row') && !e.target.closest('.permission-row')) {
-            document.querySelectorAll('.permission-row').forEach(row => row.classList.add('hidden'));
-        }
-    });
-});
-</script>
+    </script>
 
 
 
