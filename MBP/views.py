@@ -346,17 +346,20 @@ def save_role_permissions(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
     except Exception as e:
-        import traceback
         return JsonResponse({'error': str(e)}, status=500)
 
 
 
 @has_model_permission('AuditLog', 'r')
 def audit_log_list_view(request):
+    user = request.user
     search_query = request.GET.get('search', '').strip()
     action_filter = request.GET.get('log', '')
     logs = AuditLog.objects.select_related('user').order_by('-timestamp')
 
+    if not user.is_superuser:
+        logs = logs.filter(Q(user=user) | Q(user__created_by=user))
+    
     if search_query:
         logs = logs.filter(
             Q(user__full_name__icontains=search_query) |

@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models
 import uuid
 from MBP.models import Role
+from django.conf import settings
+from datetime import date
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -22,7 +24,6 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         return self.create_user(email, password, **extra_fields)
-from django.conf import settings
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -51,3 +52,43 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+
+GENDER_CHOICES = [
+    ('male', 'Male'),
+    ('female', 'Female'),
+    ('other', 'Other'),
+]
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    bio = models.TextField(blank=True)
+    mobile = models.CharField(max_length=15, blank=True)
+    address = models.TextField(blank=True)
+    country = models.CharField(max_length=100, blank=True)
+
+    dob = models.DateField(null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.get_full_name()}"
+
+    def save(self, *args, **kwargs):
+        if self.dob:
+            today = date.today()
+            self.age = today.year - self.dob.year - (
+                (today.month, today.day) < (self.dob.month, self.dob.day)
+            )
+        super().save(*args, **kwargs)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User, Notification, Profile
 
 
 @admin.register(User)
@@ -32,3 +32,36 @@ class CustomUserAdmin(BaseUserAdmin):
         if not change and request.user.is_superuser:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'is_read', 'timestamp')
+    list_filter = ('is_read', 'timestamp')
+    search_fields = ('user__email', 'message')
+    ordering = ('-timestamp',)
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'user', 'mobile', 'country', 'gender', 'dob', 'age', 'created_at', 'updated_at'
+    )
+    search_fields = ('user__email', 'user__username', 'mobile', 'country')
+    list_filter = ('gender', 'country', 'created_at', 'updated_at')
+    readonly_fields = ('age', 'created_at', 'updated_at')
+    autocomplete_fields = ('user',)
+
+    fieldsets = (
+        ('User Info', {
+            'fields': ('user', 'image', 'bio')
+        }),
+        ('Contact Details', {
+            'fields': ('mobile', 'address', 'country')
+        }),
+        ('Personal Info', {
+            'fields': ('gender', 'dob', 'age')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )

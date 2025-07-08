@@ -14,12 +14,18 @@
 {% has_perm request.user 'User' 'c' as can_create_user %}
 {% has_perm request.user 'User' 'd' as can_delete_user %}
 {% has_perm request.user 'User' 'u' as can_update_user %}
+{% has_perm request.user 'User' 'u' as can_password_change_user %}
 <!-- Permission -->
 {% has_perm request.user 'PermissionType' 'c' as can_create_permission %}
 {% has_perm request.user 'PermissionType' 'd' as can_delete_permission %}
 {% has_perm request.user 'PermissionType' 'u' as can_update_permission %}
 <!-- Audit Logs -->
 {% has_perm request.user 'AuditLog' 'd' as can_delete_log %}
+<!-- Notification -->
+{% has_perm request.user 'Notification' 'r' as can_read_notification %}
+<!-- Profile -->
+{% has_perm request.user 'Profile' 'u' as can_update_profile %}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -212,15 +218,18 @@
         .hamburger-active div:last-child {
             transform: translateY(-7px) rotate(-45deg);
         }
+        .notification-badge {
+            @apply bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full absolute -top-1 -right-1;
+       }
     </style>
 </head>
 <body class="bg-green-100">
     <!-- Sidebar -->
     <aside class="sidebar bg-green-50" id="sidebar">
-        <div class="p-4 flex items-center justify-between border-b bg-green-300">
+        <div class="p-4 flex items-center justify-between border-b bg-green-200">
             <div class="flex items-center">
                 <img src="{% static 'logo.png' %}" alt="Kisan Expo Logo" class="w-8 h-8">
-                <span class="logo-text text-xl font-bold ml-2 text-gray-800">Kisan Expo</span>
+                <span class="logo-text text-2xl font-bold ml-2 text-gray-800">𝑲𝒊𝒔𝒂𝒏 𝑬𝒙𝒑𝒐</span>
             </div>
             <button id="toggle-sidebar" class="text-gray-500 hover:text-gray-700 focus:outline-none">
                 <i class="fas fa-chevron-left"></i>
@@ -232,7 +241,7 @@
                 <li>
                     <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
                     {% if request.resolver_match.url_name == 'dashboard' %}
-                    active
+                    active shadow-lg
                     {% else %}
                     text-gray-600
                     {% endif %}">
@@ -244,7 +253,7 @@
                 <li>
                     <a href="{% url 'user_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
                     {% if request.resolver_match.url_name == 'user_list' %}
-                    active
+                    active shadow-lg
                     {% else %}
                     text-gray-600
                     {% endif %}">
@@ -257,7 +266,7 @@
                 <li>
                     <a href="{% url 'role_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
                     {% if request.resolver_match.url_name == 'role_list' %}
-                    active
+                    active shadow-lg
                     {% else %}
                     text-gray-600
                     {% endif %}">
@@ -270,7 +279,7 @@
                 <li>
                     <a href="{% url 'permission_type_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
                     {% if request.resolver_match.url_name == 'permission_type_list' %}
-                    active
+                    active shadow-lg
                     {% else %}
                     text-gray-600
                     {% endif %}">
@@ -283,7 +292,7 @@
                 <li>
                     <a href="{% url 'audit_log_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
                     {% if request.resolver_match.url_name == 'audit_log_list' %}
-                    active
+                    active shadow-lg
                     {% else %}
                     text-gray-600
                     {% endif %}">
@@ -311,7 +320,7 @@
     <!-- Main Content -->
     <div class="main-content" id="main-content">
         <!-- Header -->
-        <header class="header flex items-center justify-between px-6 bg-green-50">
+        <header class="header flex items-center justify-between px-6 bg-green-50 shadow">
             <!-- Mobile menu button -->
             <button id="mobile-menu-button" class="hamburger md:hidden focus:outline-none">
                 <div></div>
@@ -327,10 +336,20 @@
             
             <!-- Right side icons -->
             <div class="flex items-center space-x-4">
-                <button class="text-gray-500 hover:text-gray-700 relative focus:outline-none">
-                    <i class="fas fa-bell text-xl"></i>
-                    <span class="notification-badge">3</span>
-                </button>
+                <div class="relative inline-block group" id="notificationWrapper">
+    <button id="notificationBtn" class="text-gray-500 hover:text-gray-700 relative focus:outline-none">
+        <i class="fas fa-bell text-xl"></i>
+        <span id="notificationCount" class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 hidden">0</span>
+    </button>
+
+    {% if can_read_notification %}
+    <div id="notificationDropdown"
+         class="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white border rounded shadow-md z-50 transition">
+        <div id="notificationList" class="p-2 max-h-64 overflow-y-auto"></div>
+    </div>
+    {% endif %}
+</div>
+
                 
                 <!-- Profile dropdown -->
                 <div class="profile-toggle relative">
@@ -341,12 +360,17 @@
                     </button>
                     
                     <div class="profile-menu mt-2 py-2">
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        {% if can_update_profile%}
+                        <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             <i class="fas fa-user mr-2"></i> Profile
                         </a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        {% endif %}
+                        
+                        {% if can_password_change_user%}
+                        <a href="#" id="openChangePasswordModal" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             <i class="fas fa-cog mr-2"></i> Settings
                         </a>
+                        {% endif %}
                         <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </a>
@@ -365,7 +389,7 @@
 {% block content %}
         <!-- Page content -->
         <main class="p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">𝙳𝚊𝚜𝚑𝚋𝚘𝚊𝚛𝚍 𝙾𝚟𝚎𝚛𝚟𝚒𝚎𝚠</h1>
             <!-- Your Django template content would go here -->
             <div class="bg-white rounded-lg shadow p-6">
                 <p class="text-gray-600">Welcome to your Django admin dashboard. This is where your main content will appear.</p>
@@ -373,6 +397,71 @@
         </main>
     </div>
 {% endblock %}
+
+    <!-- Change Password Modal -->
+    <div id="ChangePasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Create New Password</h3>
+                <button id="closeChangePasswordModal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form method="POST" action="{% url 'change_password' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="oldPassword" class="block text-sm font-medium text-gray-700">Old Password</label>
+                    <input type="password" name="old_password" id="roleName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="mb-4">
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
+                    <input type="password" name="new_password1" id="roleName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="mb-4">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input type="password" name="new_password2" id="roleName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm">Change Password</button>
+                    <button type="button" id="cancelChangePassword" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 text-sm">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Role Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("ChangePasswordModal");
+            const openBtn = document.getElementById("openChangePasswordModal");
+            const closeBtn = document.getElementById("closeChangePasswordModal");
+            const cancelBtn = document.getElementById("cancelChangePassword");
+
+            openBtn?.addEventListener("click", () => {
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+            });
+
+            closeBtn?.addEventListener("click", () => {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            });
+
+            cancelBtn?.addEventListener("click", () => {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.classList.add("hidden");
+                    modal.classList.remove("flex");
+                }
+            });
+        });
+    </script>
+
+    <!--  Toggle sidebar collapse/expand -->
     <script>
         // Toggle sidebar collapse/expand
         const toggleSidebar = document.getElementById('toggle-sidebar');
@@ -412,6 +501,8 @@
             });
         });
     </script>
+
+    <!-- Set background color based on message level -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
         const notification = document.getElementById('notification');
@@ -454,25 +545,117 @@
                 }, 500); // match the transition duration
             }, 3000);
         }
-    });
-</script>
-<input type="hidden" id="clientTime" name="client_time">
-<script>
-    function getISOTimeNow() {
-        const now = new Date();
-        const offset = now.getTimezoneOffset();
-        const localTime = new Date(now.getTime() - offset * 60000);
-        return localTime.toISOString().slice(0, 19);
-    }
-    document.addEventListener('DOMContentLoaded', function () {
-        const input = document.getElementById('clientTime');
-        if (input) {
-            const now = getISOTimeNow();
-            input.value = now;
-        }
-    });
-</script>
+        });
+    </script>
 
+    <!-- Send real time to the server -->
+    <input type="hidden" id="clientTime" name="client_time">
+    <script>
+        function getISOTimeNow() {
+            const now = new Date();
+            const offset = now.getTimezoneOffset();
+            const localTime = new Date(now.getTime() - offset * 60000);
+            return localTime.toISOString().slice(0, 19);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('clientTime');
+            if (input) {
+                const now = getISOTimeNow();
+                input.value = now;
+            }
+        });
+    </script>
+
+    <!-- Show the notification -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btn = document.getElementById('notificationBtn');
+            const dropdown = document.getElementById('notificationDropdown');
+            const list = document.getElementById('notificationList');
+            const count = document.getElementById('notificationCount');
+            const wrapper = document.getElementById('notificationWrapper');
+
+            // CSRF token helper
+            function getCSRFToken() {
+                return document.cookie.split('; ')
+                    .find(row => row.startsWith('csrftoken='))
+                    ?.split('=')[1];
+            }
+
+            function fetchNotifications() {
+                fetch('/get-notifications/')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            count.textContent = data.count;
+                            count.classList.remove('hidden');
+                            list.innerHTML = '';
+                            data.notifications.forEach(notif => {
+                                list.innerHTML += `
+                                    <div class="notification-wrapper flex items-center justify-between gap-3 p-2 border-b transition-opacity duration-300">
+                                        <div class="flex items-center gap-3 cursor-pointer">
+                                        <img src="${notif.avatar}" class="w-8 h-8 rounded-full" alt="Avatar">
+                                        <div class="notification-item">
+                                            <p class="text-sm font-semibold">${notif.user}</p>
+                                            <p class="text-xs text-gray-500">${notif.timestamp}</p>
+                                        </div>
+                                        </div>
+                                        <button class="delete-notification text-gray-400 hover:text-red-600 text-lg"
+                                                data-notification-id="${notif.notif_id}">
+                                        &times;
+                                        </button>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            count.classList.add('hidden');
+                            list.innerHTML = `<p class="text-center text-gray-500 text-sm py-4">No new notifications</p>`;
+                        }
+                    });
+            }
+
+            list.addEventListener('click', function (e) {
+                const deleteBtn = e.target.closest('.delete-notification');
+
+                if (deleteBtn) {
+                    const notifId = deleteBtn.dataset.notificationId;
+
+                    fetch(`/notifications/delete/${notifId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCSRFToken(),
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(() => {
+                        const notifElement = deleteBtn.closest('.notification-wrapper');
+                        notifElement.classList.add('opacity-0');
+                        setTimeout(() => notifElement.remove(), 300);
+                        fetchNotifications();
+                    });
+                    return;
+                }
+            });
+
+            // Toggle dropdown on bell click
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+                if (!dropdown.classList.contains('hidden')) {
+                    fetchNotifications();
+                }
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!wrapper.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+            fetchNotifications();
+            // Refresh every 30 seconds (you can adjust this to 10s or 30s)
+            setInterval(fetchNotifications, 60000);
+        });
+    </script>
 
 
 </body>

@@ -1,5 +1,5 @@
 from django import forms
-from .models import User
+from .models import User, Profile
 
 
 class UserRegisterForm(forms.ModelForm):
@@ -58,3 +58,35 @@ class UserCreateForm(forms.ModelForm):
             user.save()
         return user
 
+class ProfileForm(forms.ModelForm):
+    full_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            'image', 'bio', 'mobile', 'address', 'country',
+            'dob', 'gender'
+        ]
+        widgets = {
+            'dob': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+        self.fields['full_name'].initial = self.user.full_name
+        self.fields['email'].initial = self.user.email
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+
+        self.user.full_name = self.cleaned_data['full_name']
+        self.user.email = self.cleaned_data['email']
+
+        if commit:
+            self.user.save()
+            profile.user = self.user
+            profile.save()
+        return profile

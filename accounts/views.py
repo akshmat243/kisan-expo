@@ -1,16 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
 from MBP.permission import has_model_permission
 from django.contrib import messages
-from .models import User, Role
-from MBP.models import AuditLog
-from .forms import UserRegisterForm, EmailLoginForm, UserCreateForm
+from .models import User, Notification, Profile
+from MBP.models import AuditLog, Role
+from .forms import UserRegisterForm, EmailLoginForm, UserCreateForm, ProfileForm
 from MBP.utils import log_audit
 from MBP.utils import safe_model_to_dict
 from django.utils.timezone import now
 from dateutil.parser import parse as parse_datetime
+from django.utils.dateparse import parse_date
+from django.http import JsonResponse
+import json
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -46,6 +52,10 @@ def register_view(request):
                 ip_address=get_client_ip(request),
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
                 timestamp=time
+            )
+            Notification.objects.create(
+                user=user,
+                message="New user registered!"
             )
             messages.success(request, "✅ Registration successful! Please wait for admin approval.")
             return redirect('login')
@@ -230,3 +240,98 @@ def user_delete_view(request, pk):
 
     messages.error(request, '❌ Invalid request method.')
     return redirect('user_list')
+
+
+@login_required
+@has_model_permission('Notification', 'r')
+def get_notifications(request):
+    notifications = Notification.objects.filter(is_read=False).order_by('-timestamp')[:10]
+    data = [
+        {
+            "user": n.user.get_full_name(),
+            "notif_id": n.id,
+            "avatar": n.user.profile.image.url if hasattr(n.user, 'profile') else 'https://randomuser.me/api/portraits/women/44.jpg',
+            "timestamp": n.timestamp.strftime('%Y-%m-%d %H:%M'),
+            "message": n.message,
+        }
+        for n in notifications
+    ]
+    return JsonResponse({"count": len(data), "notifications": data})
+    
+
+
+from django.views.decorators.http import require_POST
+
+@require_POST
+@has_model_permission('Notification', 'd')
+def delete_notification(request, pk):
+    print("DELETE CALLED FOR ID:", pk)
+    
+    deleted, _ = Notification.objects.filter(pk=pk).delete()
+    
+    if deleted:
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'error': 'Notification not found'}, status=404)
+
+@login_required
+@has_model_permission('Profile', 'u')
+def profile_view(request):
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'photo':
+            image = request.FILES.get('image')
+            print("Image:", image)
+            if image:
+                profile.image = image
+                profile.save()
+                messages.success(request, "Profile photo updated!")
+            else:
+                messages.error(request, "No image uploaded.")
+            return redirect('profile')
+
+        else:
+            # Only use ProfileForm when not uploading photo
+            form = ProfileForm(request.POST, request.FILES, instance=profile, user=user)
+            
+            new_email = request.POST.get('email')
+            if new_email and new_email != user.email:
+                if User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
+                    messages.error(request, "{email} This email is already in use.")
+                    return redirect('profile')  
+                    
+                    
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Profile updated successfully!")
+                return redirect('profile')
+            else:
+                print("Form Errors:", form.errors)
+
+    else:
+        form = ProfileForm(instance=profile, user=user)
+
+    context = {
+        'form': form,
+        'profile': profile,
+    }
+    return render(request, 'profile.html', context)
+
+@login_required
+@has_model_permission('User', 'u')
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Prevent logout
+            messages.success(request, "Password updated successfully.")
+        else:
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
+    return redirect(request.META.get('HTTP_REFERER', '/')) 
