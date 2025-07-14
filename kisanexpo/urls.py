@@ -23,6 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('MBP.urls')),
     path('', include('accounts.urls')),
+    path('', include('Inventory.urls')),
+    path('', include('ECommerce.urls')),
+    path('', include('CRM.urls')),
+    path('', include('Content_Management_System.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

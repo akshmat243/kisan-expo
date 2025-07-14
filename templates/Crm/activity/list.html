@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Activities</h2>
+        {% if can_create_activity %}
+        <a href="{% url 'activity_create' %}" class="btn-primary text-white px-4 py-2 rounded-md">Add Activity</a>
+        {% endif %}
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Type</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Subject</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Account</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Contact</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Due Date</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                    <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                {% for item in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.activity_type }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.subject }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.account.name }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.contact.full_name }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.due_date }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.status }}</td>
+                    <td class="px-6 py-4 text-right text-sm">
+                        {% if can_update_activity %}
+                        <a href="{% url 'activity_edit' item.pk %}" class="btn-edit text-white px-3 py-1 rounded-md">Edit</a>
+                        {% endif %}
+                        {% if can_delete_activity %}
+                        <form action="{% url 'activity_delete' item.pk %}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button onclick="return confirm('Delete this activity?');" class="btn-delete text-white px-3 py-1 rounded-md">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No activities found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="px-4 py-3">
+            {% include "Ecommerce/partials/pagination.html" with page_obj=page_obj %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -41,8 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
     'MBP',
     'accounts',
+    'Content_Management_System',
+    'ECommerce',
+    'Analytics',
+    'Inventory',
+    'CRM',
 ]
 
 MIDDLEWARE = [

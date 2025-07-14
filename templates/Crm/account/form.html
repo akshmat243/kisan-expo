@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Account{% else %}Add Account{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Name -->
+        <div class="mb-4">
+            <label for="id_name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" name="name" id="id_name"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.name.value|default:'' }}" required>
+            {% if form.name.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.name.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Industry -->
+        <div class="mb-4">
+            <label for="id_industry" class="block text-sm font-medium text-gray-700">Industry</label>
+            <input type="text" name="industry" id="id_industry"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.industry.value|default:'' }}">
+            {% if form.industry.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.industry.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Website -->
+        <div class="mb-4">
+            <label for="id_website" class="block text-sm font-medium text-gray-700">Website</label>
+            <input type="url" name="website" id="id_website"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.website.value|default:'' }}">
+            {% if form.website.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.website.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-4">
+            <label for="id_phone" class="block text-sm font-medium text-gray-700">Phone</label>
+            <input type="text" name="phone" id="id_phone"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.phone.value|default:'' }}">
+            {% if form.phone.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Address -->
+        <div class="mb-4">
+            <label for="id_address" class="block text-sm font-medium text-gray-700">Address</label>
+            <textarea name="address" id="id_address" rows="3"
+                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">{{ form.address.value|default:'' }}</textarea>
+            {% if form.address.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.address.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+            <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="id_description" rows="3"
+                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.description.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit & Cancel -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'account_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Coupons</h2>
+        {% if can_create_coupon %}
+        <a href="{% url 'coupon_create' %}" class="btn-primary text-white px-4 py-2 rounded-md">Add Coupon</a>
+        {% endif %}
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Code</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Discount (%)</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Valid From</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Valid To</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Active</th>
+                    <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                {% for coupon in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4 text-sm">{{ coupon.code }}</td>
+                    <td class="px-6 py-4 text-sm">{{ coupon.discount_percent }}</td>
+                    <td class="px-6 py-4 text-sm">{{ coupon.valid_from|date:"Y-m-d" }}</td>
+                    <td class="px-6 py-4 text-sm">{{ coupon.valid_to|date:"Y-m-d" }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ coupon.is_active|yesno:'bg-green-100 text-green-800,bg-red-100 text-red-800' }}">
+                            {{ coupon.is_active|yesno:"Yes,No" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right text-sm">
+                        {% if can_update_coupon %}
+                        <a href="{% url 'coupon_edit' coupon.pk %}" class="btn-edit text-white px-3 py-1 rounded-md">Edit</a>
+                        {% endif %}
+                        {% if can_delete_coupon %}
+                        <form action="{% url 'coupon_delete' coupon.pk %}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button onclick="return confirm('Delete this coupon?');" class="btn-delete text-white px-3 py-1 rounded-md">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No coupons found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="px-4 py-3">
+            {% include "Ecommerce/partials/pagination.html" with page_obj=page_obj %}
+        </div>
+    </div>
+</div>
+{% endblock %}

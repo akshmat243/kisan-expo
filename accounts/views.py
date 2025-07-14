@@ -9,8 +9,7 @@ from django.contrib import messages
 from .models import User, Notification, Profile
 from MBP.models import AuditLog, Role
 from .forms import UserRegisterForm, EmailLoginForm, UserCreateForm, ProfileForm
-from MBP.utils import log_audit
-from MBP.utils import safe_model_to_dict
+from MBP.utils import log_audit, safe_model_to_dict
 from django.utils.timezone import now
 from dateutil.parser import parse as parse_datetime
 from django.utils.dateparse import parse_date
@@ -266,13 +265,25 @@ from django.views.decorators.http import require_POST
 @has_model_permission('Notification', 'd')
 def delete_notification(request, pk):
     print("DELETE CALLED FOR ID:", pk)
-    
-    deleted, _ = Notification.objects.filter(pk=pk).delete()
-    
-    if deleted:
-        return JsonResponse({'success': True})
-    else:
+
+    try:
+        notification = Notification.objects.get(pk=pk)
+    except Notification.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Notification not found'}, status=404)
+
+    time = get_client_time(request)
+    user = request.user
+    data = safe_model_to_dict(notification)
+
+    notification.delete()
+
+    log_audit(
+        user, 'delete', notification,
+        details="Notification Read by: '{}'".format(user.full_name),
+        new_data=data, request=request, timestamp=time
+    )
+
+    return JsonResponse({'success': True})
 
 @login_required
 @has_model_permission('Profile', 'u')
@@ -281,6 +292,7 @@ def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
+        old_data = user
         form_type = request.POST.get('form_type')
 
         if form_type == 'photo':
@@ -289,6 +301,17 @@ def profile_view(request):
             if image:
                 profile.image = image
                 profile.save()
+                time = get_client_time(request)
+                log_audit(
+                        user=request.user,
+                        action='update',
+                        instance=user,
+                        details=f"User Profile Photo Updated: '{user.full_name}'",
+                        old_data=safe_model_to_dict(old_data),
+                        new_data=safe_model_to_dict(profile),
+                        request=request,
+                        timestamp=time
+                    )
                 messages.success(request, "Profile photo updated!")
             else:
                 messages.error(request, "No image uploaded.")
@@ -306,7 +329,18 @@ def profile_view(request):
                     
                     
             if form.is_valid():
-                form.save()
+                profile = form.save()
+                time = get_client_time(request)
+                log_audit(
+                        user=request.user,
+                        action='update',
+                        instance=user,
+                        details=f"User Profile Updated: '{user.full_name}'",
+                        old_data=safe_model_to_dict(old_data),
+                        new_data=safe_model_to_dict(profile),
+                        request=request,
+                        timestamp=time
+                    )
                 messages.success(request, "Profile updated successfully!")
                 return redirect('profile')
             else:
@@ -325,10 +359,22 @@ def profile_view(request):
 @has_model_permission('User', 'u')
 def change_password(request):
     if request.method == 'POST':
+        old_data = request.user
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Prevent logout
+            update_session_auth_hash(request, user)
+            time = get_client_time(request)
+            log_audit(
+                    user=request.user,
+                    action='update',
+                    instance=user,
+                    details=f"User Password Updated: '{user.full_name}'",
+                    old_data=safe_model_to_dict(old_data),
+                    new_data=safe_model_to_dict(user),
+                    request=request,
+                    timestamp=time
+                )
             messages.success(request, "Password updated successfully.")
         else:
             for field, error_list in form.errors.items():

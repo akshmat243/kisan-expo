@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %} Edit Product Image {% else %} Add Product Image {% endif %}
+    </h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Product Dropdown -->
+        <div class="mb-4">
+            <label for="id_product" class="block text-sm font-medium text-gray-700">Product</label>
+            <select name="product" id="id_product" required
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select Product</option>
+                {% for option in form.fields.product.queryset %}
+                    <option value="{{ option.pk }}" {% if form.product.value|stringformat:"s" == option.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ option.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.product.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.product.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Image Upload -->
+        <div class="mb-4">
+            <label for="id_image" class="block text-sm font-medium text-gray-700">Image</label>
+            <input type="file" name="image" id="id_image"
+                class="block w-full text-sm border border-gray-300 rounded-md py-2 px-3">
+            {% if form.image.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.image.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Is Feature -->
+        <div class="mb-4 flex items-center">
+            <input type="checkbox" name="is_feature" id="id_is_feature"
+                class="rounded border-gray-300 shadow-sm focus:ring-indigo-500" {% if form.is_feature.value %}checked{% endif %}>
+            <label for="id_is_feature" class="ml-2 text-sm text-gray-700">Set as Featured</label>
+        </div>
+
+        <!-- Submit -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'productimage_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

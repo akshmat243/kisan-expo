@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; }
+    .modal.open { display: flex; }
+    .modal-content { background: white; padding: 2rem; border-radius: 0.5rem; max-width: 500px; width: 90%; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Inventory Management</h1>
+        {% if can_create_inventory%}
+        <button id="createInventoryBtn" class="btn-primary text-white px-4 py-2 rounded-md">
+            <i class="fas fa-plus mr-2"></i> Add Inventory
+        </button>
+        {% endif %}
+    </div>
+    <!-- Search and Filter Bar -->
+    <div class="mb-6 bg-white p-4 rounded-lg shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Inventory</label>
+                <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="search" value="{{ search }}" placeholder="Search users..." class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                    </div>  
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500">Product</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500">Warehouse</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500">Quantity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500">Reorder</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for inventory in inventories %}
+                <tr>
+                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4 text-sm">{{ inventory.product.name }}</td>
+                    <td class="px-6 py-4 text-sm">{{ inventory.warehouse.name }}</td>
+                    <td class="px-6 py-4 text-sm">{{ inventory.quantity }}</td>
+                    <td class="px-6 py-4 text-sm">{{ inventory.reorder_level }}</td>
+                    <td class="px-6 py-4 text-sm text-right">
+                        {% if can_update_inventory%}
+                        <button class="btn-edit text-white px-3 py-1 rounded-md edit-btn" 
+                                data-id="{{ inventory.id }}"
+                                data-product-id="{{ inventory.product.id }}"
+                                data-warehouse-id="{{ inventory.warehouse.id }}"
+                                data-quantity="{{ inventory.quantity }}"
+                                data-reorder="{{ inventory.reorder_level }}">
+                            Edit
+                        </button>
+                        {% endif %}
+                        {% if can_delete_inventory%}
+                        <form action="{% url 'inventory_delete' inventory.pk %}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button class="btn-delete text-white px-3 py-1 rounded-md" onclick="return confirm('Delete this inventory?');">
+                                Delete
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="px-6 py-4 text-sm">No inventory records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pagination -->
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Showing <span class="font-medium">{{ page_obj.start_index }}</span>
+                            to <span class="font-medium">{{ page_obj.end_index }}</span>
+                            of <span class="font-medium">{{ page_obj.paginator.count }}</span> results
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?{% if search %}search={{ search }}&{% endif %}{% if role %}role={{ role }}&{% endif %}{% if status %}status={{ status }}&{% endif %}page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Previous</span>
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% else %}
+                                <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-200 bg-gray-100 text-sm font-medium text-gray-400">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <span class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                        {{ num }}
+                                    </span>
+                                {% else %}
+                                    <a href="?{% if search %}search={{ search }}&{% endif %}{% if role %}role={{ role }}&{% endif %}{% if status %}status={{ status }}&{% endif %}page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a href="?{% if search %}search={{ search }}&{% endif %}{% if role %}role={{ role }}&{% endif %}{% if status %}status={{ status }}&{% endif %}page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Next</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% else %}
+                                <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-200 bg-gray-100 text-sm font-medium text-gray-400">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="inventoryModal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-lg font-bold mb-4" id="inventoryModalTitle">Add Inventory</h3>
+        <form id="inventoryForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="inventory_id" id="inventoryId">
+
+            <div class="mb-4">
+                <label for="product" class="block text-sm font-medium">Product</label>
+                <select name="product" id="product" class="w-full border rounded-md py-2 px-3">
+                    {% for product in products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% empty %}
+                        <option value="">No Product Found</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="warehouse" class="block text-sm font-medium">Warehouse</label>
+                <select name="warehouse" id="warehouse" class="w-full border rounded-md py-2 px-3">
+                    {% for warehouse in warehouses %}
+                        <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                    {% empty %}
+                        <option value="">No Warehouse Found</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="quantity" class="block text-sm font-medium">Quantity</label>
+                <input type="number" name="quantity" id="quantity" class="w-full border rounded-md py-2 px-3" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="reorder_level" class="block text-sm font-medium">Reorder Level</label>
+                <input type="number" name="reorder_level" id="reorder_level" class="w-full border rounded-md py-2 px-3" required>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <button type="submit" class="btn-primary w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm">Save</button>
+                <button type="button" id="cancelInventory" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('inventoryModal');
+        const form = document.getElementById('inventoryForm');
+        const cancelBtn = document.getElementById('cancelInventory');
+        const modalTitle = document.getElementById('inventoryModalTitle');
+
+        document.getElementById('createInventoryBtn').addEventListener('click', function () {
+            form.reset();
+            modalTitle.textContent = 'Add Inventory';
+            form.action = '{% url "inventory_create" %}';
+            modal.classList.add('open');
+        });
+
+        cancelBtn.addEventListener('click', function () {
+            modal.classList.remove('open');
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.dataset.id;
+                const productId = this.dataset.productId;
+                const warehouseId = this.dataset.warehouseId;
+                const quantity = this.dataset.quantity;
+                const reorder = this.dataset.reorder;
+
+                document.getElementById('product').value = productId;
+                document.getElementById('warehouse').value = warehouseId;
+                document.getElementById('quantity').value = quantity;
+                document.getElementById('reorder_level').value = reorder;
+                modalTitle.textContent = 'Edit Inventory';
+                form.action = `/inventory/${id}/edit/`;
+                modal.classList.add('open');
+            });
+        });
+
+        window.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

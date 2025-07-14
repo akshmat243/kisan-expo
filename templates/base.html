@@ -25,6 +25,114 @@
 {% has_perm request.user 'Notification' 'r' as can_read_notification %}
 <!-- Profile -->
 {% has_perm request.user 'Profile' 'u' as can_update_profile %}
+<!-- Warehouse -->
+{% has_perm request.user 'Warehouse' 'r' as can_read_warehouse %}
+{% has_perm request.user 'Warehouse' 'c' as can_create_warehouse %}
+{% has_perm request.user 'Warehouse' 'u' as can_update_warehouse %}
+{% has_perm request.user 'Warehouse' 'd' as can_delete_warehouse %}
+<!-- Inventory -->
+{% has_perm request.user 'Inventory' 'r' as can_read_inventory %}
+{% has_perm request.user 'Inventory' 'c' as can_create_inventory %}
+{% has_perm request.user 'Inventory' 'u' as can_update_inventory %}
+{% has_perm request.user 'Inventory' 'd' as can_delete_inventory %}
+<!-- ECommerce Read -->
+{% has_perm request.user 'Category' 'r' as can_read_category %}
+{% has_perm request.user 'Brand' 'r' as can_read_brand %}
+{% has_perm request.user 'Product' 'r' as can_read_product %}
+{% has_perm request.user 'ProductImage' 'r' as can_read_productimage %}
+{% has_perm request.user 'ProductReview' 'r' as can_read_productreview %}
+{% has_perm request.user 'Cart' 'r' as can_read_cart %}
+{% has_perm request.user 'CartItem' 'r' as can_read_cartitem %}
+{% has_perm request.user 'Coupon' 'r' as can_read_coupon %}
+{% has_perm request.user 'Order' 'r' as can_read_order %}
+{% has_perm request.user 'OrderItem' 'r' as can_read_orderitem %}
+{% has_perm request.user 'Payment' 'r' as can_read_payment %}
+<!-- Create -->
+{% has_perm request.user 'Category' 'c' as can_create_category %}
+{% has_perm request.user 'Brand' 'c' as can_create_brand %}
+{% has_perm request.user 'Product' 'c' as can_create_product %}
+{% has_perm request.user 'ProductImage' 'c' as can_create_productimage %}
+{% has_perm request.user 'ProductReview' 'c' as can_create_productreview %}
+{% has_perm request.user 'Cart' 'c' as can_create_cart %}
+{% has_perm request.user 'CartItem' 'c' as can_create_cartitem %}
+{% has_perm request.user 'Coupon' 'c' as can_create_coupon %}
+{% has_perm request.user 'Order' 'c' as can_create_order %}
+{% has_perm request.user 'OrderItem' 'c' as can_create_orderitem %}
+{% has_perm request.user 'Payment' 'c' as can_create_payment %}
+<!-- Update -->
+{% has_perm request.user 'Category' 'u' as can_update_category %}
+{% has_perm request.user 'Brand' 'u' as can_update_brand %}
+{% has_perm request.user 'Product' 'u' as can_update_product %}
+{% has_perm request.user 'ProductImage' 'u' as can_update_productimage %}
+{% has_perm request.user 'ProductReview' 'u' as can_update_productreview %}
+{% has_perm request.user 'Cart' 'u' as can_update_cart %}
+{% has_perm request.user 'CartItem' 'u' as can_update_cartitem %}
+{% has_perm request.user 'Coupon' 'u' as can_update_coupon %}
+{% has_perm request.user 'Order' 'u' as can_update_order %}
+{% has_perm request.user 'OrderItem' 'u' as can_update_orderitem %}
+{% has_perm request.user 'Payment' 'u' as can_update_payment %}
+<!-- Delete -->
+{% has_perm request.user 'Category' 'd' as can_delete_category %}
+{% has_perm request.user 'Brand' 'd' as can_delete_brand %}
+{% has_perm request.user 'Product' 'd' as can_delete_product %}
+{% has_perm request.user 'ProductImage' 'd' as can_delete_productimage %}
+{% has_perm request.user 'ProductReview' 'd' as can_delete_productreview %}
+{% has_perm request.user 'Cart' 'd' as can_delete_cart %}
+{% has_perm request.user 'CartItem' 'd' as can_delete_cartitem %}
+{% has_perm request.user 'Coupon' 'd' as can_delete_coupon %}
+{% has_perm request.user 'Order' 'd' as can_delete_order %}
+{% has_perm request.user 'OrderItem' 'd' as can_delete_orderitem %}
+{% has_perm request.user 'Payment' 'd' as can_delete_payment %}
+<!-- CRM Account -->
+{% has_perm request.user 'Account' 'r' as can_read_account %}
+{% has_perm request.user 'Account' 'c' as can_create_account %}
+{% has_perm request.user 'Account' 'u' as can_update_account %}
+{% has_perm request.user 'Account' 'd' as can_delete_account %}
+<!-- CRM Contact -->
+{% has_perm request.user 'Contact' 'r' as can_read_contact %}
+{% has_perm request.user 'Contact' 'c' as can_create_contact %}
+{% has_perm request.user 'Contact' 'u' as can_update_contact %}
+{% has_perm request.user 'Contact' 'd' as can_delete_contact %}
+<!-- CRM Lead -->
+{% has_perm request.user 'Lead' 'r' as can_read_lead %}
+{% has_perm request.user 'Lead' 'c' as can_create_lead %}
+{% has_perm request.user 'Lead' 'u' as can_update_lead %}
+{% has_perm request.user 'Lead' 'd' as can_delete_lead %}
+<!-- CRM Opportunity -->
+{% has_perm request.user 'Opportunity' 'r' as can_read_opportunity %}
+{% has_perm request.user 'Opportunity' 'c' as can_create_opportunity %}
+{% has_perm request.user 'Opportunity' 'u' as can_update_opportunity %}
+{% has_perm request.user 'Opportunity' 'd' as can_delete_opportunity %}
+<!-- CRM Activity -->
+{% has_perm request.user 'Activity' 'r' as can_read_activity %}
+{% has_perm request.user 'Activity' 'c' as can_create_activity %}
+{% has_perm request.user 'Activity' 'u' as can_update_activity %}
+{% has_perm request.user 'Activity' 'd' as can_delete_activity %}
+<!-- CRM OpportunityNote -->
+{% has_perm request.user 'OpportunityNote' 'r' as can_read_opportunitynote %}
+{% has_perm request.user 'OpportunityNote' 'c' as can_create_opportunitynote %}
+{% has_perm request.user 'OpportunityNote' 'u' as can_update_opportunitynote %}
+{% has_perm request.user 'OpportunityNote' 'd' as can_delete_opportunitynote %}
+<!-- CRM Document -->
+{% has_perm request.user 'Document' 'r' as can_read_document %}
+{% has_perm request.user 'Document' 'c' as can_create_document %}
+{% has_perm request.user 'Document' 'u' as can_update_document %}
+{% has_perm request.user 'Document' 'd' as can_delete_document %}
+<!-- Inventory StockTransaction -->
+{% has_perm request.user 'StockTransaction' 'r' as can_read_stocktransaction %}
+{% has_perm request.user 'StockTransaction' 'c' as can_create_stocktransaction %}
+{% has_perm request.user 'StockTransaction' 'u' as can_update_stocktransaction %}
+{% has_perm request.user 'StockTransaction' 'd' as can_delete_stocktransaction %}
+<!-- Inventory StockTransaction -->
+{% has_perm request.user 'StockTransfer' 'r' as can_read_stocktransfer %}
+{% has_perm request.user 'StockTransfer' 'c' as can_create_stocktransfer %}
+{% has_perm request.user 'StockTransfer' 'u' as can_update_stocktransfer %}
+{% has_perm request.user 'StockTransfer' 'd' as can_delete_stocktransfer %}
+<!-- CMS Page -->
+{% has_perm request.user 'Page' 'r' as can_read_page %}
+{% has_perm request.user 'Page' 'c' as can_create_page %}
+{% has_perm request.user 'Page' 'u' as can_update_page %}
+{% has_perm request.user 'Page' 'd' as can_delete_page %}
 
 
 <!DOCTYPE html>
@@ -32,11 +140,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Admin Dashboard</title>
+    <title>Kisan Expo</title>
+    <link rel="icon" type="image/png" href="{% static 'logo.png' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -221,22 +330,41 @@
         .notification-badge {
             @apply bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full absolute -top-1 -right-1;
        }
+       /* Tailwind-compatible custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        }
+
+        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.4);
+        }
+
     </style>
 </head>
 <body class="bg-green-100">
     <!-- Sidebar -->
-    <aside class="sidebar bg-green-50" id="sidebar">
+    <aside x-data="{ sidebarCollapsed: false }" class="sidebar bg-green-50 transition-all duration-300"
+       :class="sidebarCollapsed ? 'w-26' : 'w-69'" id="sidebar">
         <div class="p-4 flex items-center justify-between border-b bg-green-200">
             <div class="flex items-center">
                 <img src="{% static 'logo.png' %}" alt="Kisan Expo Logo" class="w-8 h-8">
                 <span class="logo-text text-2xl font-bold ml-2 text-gray-800">𝑲𝒊𝒔𝒂𝒏 𝑬𝒙𝒑𝒐</span>
             </div>
-            <button id="toggle-sidebar" class="text-gray-500 hover:text-gray-700 focus:outline-none">
-                <i class="fas fa-chevron-left"></i>
+            <button id="toggle-sidebar" @click="sidebarCollapsed = !sidebarCollapsed" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                <i class="fas" :class="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
             </button>
         </div>
         
-        <div class="p-4">
+        <div class="p-4 overflow-y-auto h-[calc(100vh-64px)] custom-scrollbar">
             <ul class="space-y-1">
                 <li>
                     <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
@@ -245,46 +373,314 @@
                     {% else %}
                     text-gray-600
                     {% endif %}">
-                        <i class="sidebar-icon fas fa-tachometer-alt text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Dashboard</span>
+                        <i class="sidebar-icon fas fa-tachometer-alt w-6 text-center text-red-500"></i>
+                        <span class="sidebar-text ml-3" x-show="!sidebarCollapsed">Dashboard</span>
                     </a>
                 </li>
-                {% if can_read_user %}
-                <li>
-                    <a href="{% url 'user_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
-                    {% if request.resolver_match.url_name == 'user_list' %}
-                    active shadow-lg
-                    {% else %}
-                    text-gray-600
-                    {% endif %}">
-                        <i class="sidebar-icon fas fa-users text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Users</span>
-                    </a>
+                <li x-data="{ open: {% if request.resolver_match.url_name|in_list:"user_list,role_list,permission_type_list" %}true{% else %}false{% endif %} }" 
+                    x-effect="if (sidebarCollapsed) open = false">
+                    <button @click="open = !open" class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition">
+                        <i class="fas fa-lock w-6 text-center text-gray-500"></i>
+                        <span x-show="!sidebarCollapsed" class="ml-3 flex-1 text-left">User Management</span>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down ml-auto text-xs transition-transform" :class="{'rotate-180': open}"></i>
+                    </button>
+
+                    <!-- Nested menu -->
+                    <ul x-show="open" x-transition x-cloak class="ml-6 mt-2 space-y-1">
+                        {% if can_read_user %}
+                        <li>
+                            <a href="{% url 'user_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition
+                                {% if request.resolver_match.url_name == 'user_list' %}
+                                    bg-gray-200 text-black font-semibold
+                                {% else %}
+                                    text-gray-600 hover:bg-gray-100
+                                {% endif %}">
+                                <i class="fas fa-users w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Users</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_role %}
+                        <li>
+                            <a href="{% url 'role_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition
+                                {% if request.resolver_match.url_name == 'role_list' %}
+                                    bg-gray-200 text-black font-semibold
+                                {% else %}
+                                    text-gray-600 hover:bg-gray-100
+                                {% endif %}">
+                                <i class="fas fa-user-tie w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Roles</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_permission %}
+                        <li>
+                            <a href="{% url 'permission_type_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition
+                                {% if request.resolver_match.url_name == 'permission_type_list' %}
+                                    bg-gray-200 text-black font-semibold
+                                {% else %}
+                                    text-gray-600 hover:bg-gray-100
+                                {% endif %}">
+                                <i class="fa-solid fa-user-shield w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Permissions</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </li>
-                {% endif %}
-                {% if can_read_role %}
-                <li>
-                    <a href="{% url 'role_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
-                    {% if request.resolver_match.url_name == 'role_list' %}
-                    active shadow-lg
-                    {% else %}
-                    text-gray-600
-                    {% endif %}">
-                        <i class="sidebar-icon fas fa-user-tie text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Roles</span>
-                    </a>
+
+                <li x-data="{ open: {% if request.resolver_match.url_name|in_list:'warehouse_list,inventory_list,stocktransaction_list,stocktransfer_list' %}true{% else %}false{% endif %} }"
+                    x-effect="if (sidebarCollapsed) open = false">
+                    
+                    <button @click="open = !open" class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition">
+                        <i class="fas fa-warehouse w-6 text-center text-gray-500"></i>
+                        <span x-show="!sidebarCollapsed" class="ml-3 flex-1 text-left">Warehouse</span>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down ml-auto text-xs transition-transform" :class="{'rotate-180': open}"></i>
+                    </button>
+
+                    <ul x-show="open" x-transition x-cloak class="ml-6 mt-2 space-y-1">
+
+                        {% if can_read_warehouse %}
+                        <li>
+                            <a href="{% url 'warehouse_list' %}" class="sidebar-item flex items-center py-2 px-2 rounded-lg transition 
+                                {% if request.resolver_match.url_name == 'warehouse_list' %} bg-gray-200 text-black font-semibold 
+                                {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-building w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Warehouses</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_inventory %}
+                        <li>
+                            <a href="{% url 'inventory_list' %}" class="sidebar-item flex items-center py-2 px-2 rounded-lg transition 
+                                {% if request.resolver_match.url_name == 'inventory_list' %} bg-gray-200 text-black font-semibold 
+                                {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-boxes-stacked w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Inventory</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_stocktransaction %}
+                        <li>
+                            <a href="{% url 'stocktransaction_list' %}" class="sidebar-item flex items-center py-2 px-2 rounded-lg transition 
+                                {% if request.resolver_match.url_name == 'stocktransaction_list' %} bg-gray-200 text-black font-semibold 
+                                {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-exchange-alt w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Stock Transactions</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_stocktransfer %}
+                        <li>
+                            <a href="{% url 'stocktransfer_list' %}"
+                                class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'stocktransfer_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-random w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Stock Transfers</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
                 </li>
-                {% endif %}
-                {% if can_read_permission %}
+                <li x-data="{ open: {% if request.resolver_match.url_name|in_list:'category_list,brand_list,product_list,productimage_list,productreview_list,cart_list,cartitem_list,coupon_list,order_list,orderitem_list,payment_list' %}true{% else %}false{% endif %} }" 
+                    x-effect="if (sidebarCollapsed) open = false">
+                    
+                    <button @click="open = !open" class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition">
+                        <i class="fas fa-shop w-6 text-center text-gray-500"></i>
+                        <span x-show="!sidebarCollapsed" class="ml-3 flex-1 text-left">E-Commerce</span>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down ml-auto text-xs transition-transform" :class="{'rotate-180': open}"></i>
+                    </button>
+
+                    <ul x-show="open" x-transition x-cloak class="ml-6 mt-2 space-y-1">
+                        {% if can_read_category %}
+                        <li>
+                            <a href="{% url 'category_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'category_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-folder-open w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Categories</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_brand %}
+                        <li>
+                            <a href="{% url 'brand_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'brand_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-tags w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Brands</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_product %}
+                        <li>
+                            <a href="{% url 'product_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'product_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-box w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Products</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_productimage %}
+                        <li>
+                            <a href="{% url 'productimage_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'productimage_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-image w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Product Images</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_productreview %}
+                        <li>
+                            <a href="{% url 'productreview_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'productreview_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-star w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Product Reviews</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_cart %}
+                        <li>
+                            <a href="{% url 'cart_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'cart_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-shopping-cart w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Carts</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_cartitem %}
+                        <li>
+                            <a href="{% url 'cartitem_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'cartitem_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-shopping-bag w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Cart Items</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_coupon %}
+                        <li>
+                            <a href="{% url 'coupon_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'coupon_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-ticket-alt w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Coupons</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_order %}
+                        <li>
+                            <a href="{% url 'order_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'order_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-clipboard-list w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Orders</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_orderitem %}
+                        <li>
+                            <a href="{% url 'orderitem_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'orderitem_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-list-ul w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Order Items</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_payment %}
+                        <li>
+                            <a href="{% url 'payment_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'payment_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-credit-card w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Payments</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li x-data="{ open: {% if request.resolver_match.url_name|in_list:'account_list,contact_list,lead_list,opportunity_list,activity_list,opportunitynote_list,document_list' %}true{% else %}false{% endif %} }" 
+                    x-effect="if (sidebarCollapsed) open = false">
+
+                    <button @click="open = !open" class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition">
+                        <i class="fas fa-briefcase w-6 text-center text-gray-500"></i>
+                        <span x-show="!sidebarCollapsed" class="ml-3 flex-1 text-left">CRM</span>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down ml-auto text-xs transition-transform" :class="{'rotate-180': open}"></i>
+                    </button>
+
+                    <ul x-show="open" x-transition x-cloak class="ml-6 mt-2 space-y-1">
+                        {% if can_read_account %}
+                        <li>
+                            <a href="{% url 'account_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'account_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-building w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Accounts</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_contact %}
+                        <li>
+                            <a href="{% url 'contact_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'contact_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-address-book w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Contacts</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_lead %}
+                        <li>
+                            <a href="{% url 'lead_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'lead_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-user-plus w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Leads</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_opportunity %}
+                        <li>
+                            <a href="{% url 'opportunity_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'opportunity_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-handshake w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Opportunities</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_activity %}
+                        <li>
+                            <a href="{% url 'activity_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'activity_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-tasks w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Activities</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_opportunitynote %}
+                        <li>
+                            <a href="{% url 'opportunitynote_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'opportunitynote_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-sticky-note w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Opportunity Notes</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_document %}
+                        <li>
+                            <a href="{% url 'document_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'document_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-file-alt w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Documents</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if can_read_page %}
                 <li>
-                    <a href="{% url 'permission_type_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
-                    {% if request.resolver_match.url_name == 'permission_type_list' %}
-                    active shadow-lg
+                    <a href="{% url 'page_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
+                    {% if request.resolver_match.url_name == 'page_list' %}
+                        active shadow-lg
                     {% else %}
-                    text-gray-600
+                        text-gray-600
                     {% endif %}">
-                        <i class="sidebar-icon fa-solid fa-user-shield text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Permissions</span>
+                        <i class="sidebar-icon fas fa-file-alt text-gray-500 w-6 text-center"></i>
+                        <span class="sidebar-text ml-3" x-show="!sidebarCollapsed">Pages</span>
                     </a>
                 </li>
                 {% endif %}
@@ -297,22 +693,10 @@
                     text-gray-600
                     {% endif %}">
                         <i class="sidebar-icon fa-solid fa-history text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Audit Logs</span>
+                        <span class="sidebar-text ml-3" x-show="!sidebarCollapsed">Audit Logs</span>
                     </a>
                 </li>
                 {% endif %}
-                <li>
-                    <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600">
-                        <i class="sidebar-icon fas fa-box text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Products</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600">
-                        <i class="sidebar-icon fas fa-file-invoice-dollar text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3">Orders</span>
-                    </a>
-                </li>
             </ul>
         </div>
     </aside>
@@ -337,24 +721,24 @@
             <!-- Right side icons -->
             <div class="flex items-center space-x-4">
                 <div class="relative inline-block group" id="notificationWrapper">
-    <button id="notificationBtn" class="text-gray-500 hover:text-gray-700 relative focus:outline-none">
-        <i class="fas fa-bell text-xl"></i>
-        <span id="notificationCount" class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 hidden">0</span>
-    </button>
+                    <button id="notificationBtn" class="text-gray-500 hover:text-gray-700 relative focus:outline-none">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notificationCount" class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 hidden">0</span>
+                    </button>
 
-    {% if can_read_notification %}
-    <div id="notificationDropdown"
-         class="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white border rounded shadow-md z-50 transition">
-        <div id="notificationList" class="p-2 max-h-64 overflow-y-auto"></div>
-    </div>
-    {% endif %}
-</div>
+                    {% if can_read_notification %}
+                    <div id="notificationDropdown"
+                        class="hidden group-hover:block absolute right-0 mt-2 w-80 bg-white border rounded shadow-md z-50 transition">
+                        <div id="notificationList" class="p-2 max-h-64 overflow-y-auto"></div>
+                    </div>
+                    {% endif %}
+                </div>
 
                 
                 <!-- Profile dropdown -->
                 <div class="profile-toggle relative">
                     <button class="flex items-center focus:outline-none">
-                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="w-8 h-8 rounded-full border-2 border-white">
+                        <img src="{{ request.user.profile.image.url|default:'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg' }}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-white">
                         <span class="ml-2 text-gray-700 hidden md:inline">{{ request.user.full_name|default:request.user.email }}</span>
                         <i class="fas fa-chevron-down text-xs ml-1 text-gray-500 hidden md:inline"></i>
                     </button>

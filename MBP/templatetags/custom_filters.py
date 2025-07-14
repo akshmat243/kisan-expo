@@ -22,3 +22,7 @@ def has_perm(user, model_name, perm_code):
     except (AppModel.DoesNotExist, PermissionType.DoesNotExist):
         return False
     return RoleModelPermission.objects.filter(role=role, model=model, permission_type=perm).exists()
+
+@register.filter
+def in_list(value, the_list):
+    return value in the_list

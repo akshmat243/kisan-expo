@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {{ form.instance.slug|yesno:"Edit Product,Add Product" }}
+    </h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Name -->
+        <div class="mb-4">
+            <label for="id_name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" name="name" id="id_name"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.name.value|default:'' }}" required>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-4">
+            <label for="id_category" class="block text-sm font-medium text-gray-700">Category</label>
+            <select name="category" id="id_category"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select</option>
+                {% for option in form.fields.category.queryset %}
+                    <option value="{{ option.pk }}" {% if form.category.value|stringformat:"s" == option.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ option.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Brand -->
+        <div class="mb-4">
+            <label for="id_brand" class="block text-sm font-medium text-gray-700">Brand</label>
+            <select name="brand" id="id_brand"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select</option>
+                {% for option in form.fields.brand.queryset %}
+                    <option value="{{ option.pk }}" {% if form.brand.value|stringformat:"s" == option.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ option.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+            <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="id_description"
+                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      rows="4">{{ form.description.value|default:'' }}</textarea>
+        </div>
+
+        <!-- Price -->
+        <div class="mb-4">
+            <label for="id_price" class="block text-sm font-medium text-gray-700">Price (₹)</label>
+            <input type="number" step="0.01" name="price" id="id_price"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.price.value|default:'' }}" required>
+        </div>
+
+        <!-- Discount Price -->
+        <div class="mb-4">
+            <label for="id_discount_price" class="block text-sm font-medium text-gray-700">Discount Price (₹)</label>
+            <input type="number" step="0.01" name="discount_price" id="id_discount_price"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.discount_price.value|default:'' }}">
+        </div>
+
+        <!-- Stock -->
+        <div class="mb-4">
+            <label for="id_stock" class="block text-sm font-medium text-gray-700">Stock</label>
+            <input type="number" name="stock" id="id_stock"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.stock.value|default:'' }}" required>
+        </div>
+
+        <!-- Is Active -->
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="is_active" id="id_is_active"
+                       class="rounded border-gray-300"
+                       {% if form.is_active.value %}checked{% endif %}>
+                <span class="ml-2 text-sm text-gray-700">Is Active</span>
+            </label>
+        </div>
+
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'product_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

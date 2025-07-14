@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Lead{% else %}Add Lead{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Full Name -->
+        <div class="mb-4">
+            <label for="id_full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" name="full_name" id="id_full_name"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.full_name.value|default:'' }}">
+            {% if form.full_name.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.full_name.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+            <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" name="email" id="id_email"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.email.value|default:'' }}">
+            {% if form.email.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.email.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-4">
+            <label for="id_phone" class="block text-sm font-medium text-gray-700">Phone</label>
+            <input type="text" name="phone" id="id_phone"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.phone.value|default:'' }}">
+            {% if form.phone.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Source -->
+        <div class="mb-4">
+            <label for="id_source" class="block text-sm font-medium text-gray-700">Source</label>
+            <input type="text" name="source" id="id_source"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.source.value|default:'' }}">
+            {% if form.source.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.source.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Status -->
+        <div class="mb-4">
+            <label for="id_status" class="block text-sm font-medium text-gray-700">Status</label>
+            <input type="text" name="status" id="id_status"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.status.value|default:'' }}">
+            {% if form.status.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.status.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Interested Product -->
+        <div class="mb-4">
+            <label for="id_interested_product" class="block text-sm font-medium text-gray-700">Interested Product</label>
+            <input type="text" name="interested_product" id="id_interested_product"
+                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.interested_product.value|default:'' }}">
+            {% if form.interested_product.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.interested_product.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Notes -->
+        <div class="mb-4">
+            <label for="id_notes" class="block text-sm font-medium text-gray-700">Notes</label>
+            <textarea name="notes" id="id_notes" rows="3"
+                      class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">{{ form.notes.value|default:'' }}</textarea>
+            {% if form.notes.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.notes.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit & Cancel -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'lead_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

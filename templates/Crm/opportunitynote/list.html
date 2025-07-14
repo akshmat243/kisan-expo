@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Opportunity Notes</h2>
+        {% if can_create_opportunitynote %}
+        <a href="{% url 'opportunitynote_create' %}" class="btn-primary text-white px-4 py-2 rounded-md">Add Note</a>
+        {% endif %}
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Opportunity</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Note Content</th>
+                    <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                {% for item in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.opportunity.name }}</td>
+                    <td class="px-6 py-4 text-sm">{{ item.content|truncatewords:20 }}</td>
+                    <td class="px-6 py-4 text-right text-sm">
+                        {% if can_update_opportunitynote %}
+                        <a href="{% url 'opportunitynote_edit' item.pk %}" class="btn-edit text-white px-3 py-1 rounded-md">Edit</a>
+                        {% endif %}
+                        {% if can_delete_opportunitynote %}
+                        <form action="{% url 'opportunitynote_delete' item.pk %}" method="POST" class="inline">
+                            {% csrf_token %}
+                            <button onclick="return confirm('Delete this note?');" class="btn-delete text-white px-3 py-1 rounded-md">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No notes found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="px-4 py-3">
+            {% include "Ecommerce/partials/pagination.html" with page_obj=page_obj %}
+        </div>
+    </div>
+</div>
+{% endblock %}

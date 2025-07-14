@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Stock Transaction{% else %}Add Stock Transaction{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Product -->
+        <div class="mb-4">
+            <label for="id_product" class="block text-sm font-medium text-gray-700">Product</label>
+            <select name="product" id="id_product" class="w-full border rounded-md px-3 py-2">
+                {% for product in form.fields.product.queryset %}
+                    <option value="{{ product.pk }}" {% if form.product.value|stringformat:'s' == product.pk|stringformat:'s' %}selected{% endif %}>{{ product.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.product.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.product.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Warehouse -->
+        <div class="mb-4">
+            <label for="id_warehouse" class="block text-sm font-medium text-gray-700">Warehouse</label>
+            <select name="warehouse" id="id_warehouse" class="w-full border rounded-md px-3 py-2">
+                {% for warehouse in form.fields.warehouse.queryset %}
+                    <option value="{{ warehouse.pk }}" {% if form.warehouse.value|stringformat:'s' == warehouse.pk|stringformat:'s' %}selected{% endif %}>{{ warehouse.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.warehouse.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.warehouse.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Transaction Type -->
+        <div class="mb-4">
+            <label for="id_transaction_type" class="block text-sm font-medium text-gray-700">Transaction Type</label>
+            <select name="transaction_type" id="id_transaction_type" class="w-full border rounded-md px-3 py-2">
+                {% for key, value in form.fields.transaction_type.choices %}
+                    <option value="{{ key }}" {% if form.transaction_type.value == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+            {% if form.transaction_type.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.transaction_type.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-4">
+            <label for="id_quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+            <input type="number" name="quantity" id="id_quantity"
+                   class="block w-full border-gray-300 rounded-md py-2 px-3"
+                   value="{{ form.quantity.value|default:'' }}">
+            {% if form.quantity.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.quantity.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Note -->
+        <div class="mb-4">
+            <label for="id_note" class="block text-sm font-medium text-gray-700">Note</label>
+            <textarea name="note" id="id_note" rows="3"
+                      class="w-full border-gray-300 rounded-md py-2 px-3">{{ form.note.value|default:'' }}</textarea>
+            {% if form.note.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.note.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit/Cancel -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'stocktransaction_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Order{% else %}Add Order{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- User -->
+        <div class="mb-4">
+            <label for="id_user" class="block text-sm font-medium text-gray-700">User</label>
+            <select name="user" id="id_user" class="w-full border rounded-md px-3 py-2">
+                {% for u in form.fields.user.queryset %}
+                    <option value="{{ u.pk }}" {% if form.user.value|stringformat:"s" == u.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ u.full_name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.user.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.user.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Cart -->
+        <div class="mb-4">
+            <label for="id_cart" class="block text-sm font-medium text-gray-700">Cart</label>
+            <select name="cart" id="id_cart" class="w-full border rounded-md px-3 py-2">
+                {% for c in form.fields.cart.queryset %}
+                    <option value="{{ c.pk }}" {% if form.cart.value|stringformat:"s" == c.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ c.user }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.cart.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.cart.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Coupon -->
+        <div class="mb-4">
+            <label for="id_coupon" class="block text-sm font-medium text-gray-700">Coupon</label>
+            <select name="coupon" id="id_coupon" class="w-full border rounded-md px-3 py-2">
+                <option value="">None</option>
+                {% for cp in form.fields.coupon.queryset %}
+                    <option value="{{ cp.pk }}" {% if form.coupon.value|stringformat:"s" == cp.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ cp.code }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.coupon.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.coupon.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Status -->
+        <div class="mb-4">
+            <label for="id_status" class="block text-sm font-medium text-gray-700">Status</label>
+            <select name="status" id="id_status"
+                class="block w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="">Select Status</option>
+                {% for value, label in form.fields.status.choices %}
+                    <option value="{{ value }}" {% if form.status.value == value|stringformat:"s" %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.status.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.status.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Total Amount -->
+        <div class="mb-4">
+            <label for="id_total_amount" class="block text-sm font-medium text-gray-700">Total Amount</label>
+            <input type="number" step="0.01" name="total_amount" id="id_total_amount"
+                   value="{{ form.total_amount.value|default:'' }}"
+                   class="w-full border rounded-md px-3 py-2" required>
+            {% if form.total_amount.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.total_amount.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="mb-4">
+            <label for="id_shipping_address" class="block text-sm font-medium text-gray-700">Shipping Address</label>
+            <textarea name="shipping_address" id="id_shipping_address" rows="3"
+                      class="w-full border rounded-md px-3 py-2">{{ form.shipping_address.value }}</textarea>
+            {% if form.shipping_address.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.shipping_address.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Billing Address -->
+        <div class="mb-4">
+            <label for="id_billing_address" class="block text-sm font-medium text-gray-700">Billing Address</label>
+            <textarea name="billing_address" id="id_billing_address" rows="3"
+                      class="w-full border rounded-md px-3 py-2">{{ form.billing_address.value }}</textarea>
+            {% if form.billing_address.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.billing_address.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Payment Method -->
+        <div class="mb-4">
+            <label for="id_payment_method" class="block text-sm font-medium text-gray-700">Payment Method</label>
+            <select name="payment_method" id="id_payment_method"
+                class="block w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="">Select Payment Method</option>
+                {% for value, label in form.fields.payment_method.choices %}
+                    <option value="{{ value }}" {% if form.payment_method.value == value|stringformat:"s" %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.payment_method.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.payment_method.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+
+        <!-- Is Paid -->
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="is_paid" id="id_is_paid" class="form-checkbox"
+                       {% if form.is_paid.value %}checked{% endif %}>
+                <span class="ml-2 text-sm text-gray-700">Paid</span>
+            </label>
+            {% if form.is_paid.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.is_paid.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'order_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

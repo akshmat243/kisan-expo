@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Order Item{% else %}Add Order Item{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Order -->
+        <div class="mb-4">
+            <label for="id_order" class="block text-sm font-medium text-gray-700">Order</label>
+            <select name="order" id="id_order" class="w-full border rounded-md px-3 py-2">
+                {% for o in form.fields.order.queryset %}
+                    <option value="{{ o.pk }}" {% if form.order.value|stringformat:"s" == o.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ o.id }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.order.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.order.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Product -->
+        <div class="mb-4">
+            <label for="id_product" class="block text-sm font-medium text-gray-700">Product</label>
+            <select name="product" id="id_product" class="w-full border rounded-md px-3 py-2">
+                {% for p in form.fields.product.queryset %}
+                    <option value="{{ p.pk }}" {% if form.product.value|stringformat:"s" == p.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ p.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.product.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.product.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-4">
+            <label for="id_quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+            <input type="number" name="quantity" id="id_quantity"
+                   value="{{ form.quantity.value|default:'' }}"
+                   class="w-full border rounded-md px-3 py-2" required>
+            {% if form.quantity.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.quantity.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Price -->
+        <div class="mb-4">
+            <label for="id_price" class="block text-sm font-medium text-gray-700">Price</label>
+            <input type="number" step="0.01" name="price" id="id_price"
+                   value="{{ form.price.value|default:'' }}"
+                   class="w-full border rounded-md px-3 py-2" required>
+            {% if form.price.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.price.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'orderitem_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

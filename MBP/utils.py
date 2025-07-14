@@ -2,6 +2,7 @@ from MBP.models import AuditLog
 from django.forms.models import model_to_dict
 from django.utils import timezone
 import uuid
+from datetime import datetime
 
 
 def log_audit(user, action, instance, old_data=None, new_data=None, details="", request=None, timestamp=None):
@@ -22,9 +23,20 @@ def log_audit(user, action, instance, old_data=None, new_data=None, details="", 
     )
 
 
+from django.db.models.fields.files import FieldFile
+from decimal import Decimal
+
 def safe_model_to_dict(instance):
     data = model_to_dict(instance)
     for key, value in data.items():
-        if isinstance(value, (uuid.UUID)):
+        if isinstance(value, datetime):
+            data[key] = value.isoformat()
+        elif isinstance(value, uuid.UUID):
             data[key] = str(value)
+        elif isinstance(value, FieldFile):
+            data[key] = value.url if value else None
+        elif isinstance(value, Decimal):
+            data[key] = float(value)  # Or use str(value) for exact precision
+        elif hasattr(value, 'pk'):
+            data[key] = str(value.pk)
     return data

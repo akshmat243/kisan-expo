@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Opportunity{% else %}Add Opportunity{% endif %}
+    </h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Name -->
+        <div class="mb-4">
+            <label for="id_name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" name="name" id="id_name"
+                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.name.value|default:'' }}">
+            {% if form.name.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.name.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Account -->
+        <div class="mb-4">
+            <label for="id_account" class="block text-sm font-medium text-gray-700">Account</label>
+            <select name="account" id="id_account"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select account</option>
+                {% for account in form.fields.account.queryset %}
+                    <option value="{{ account.pk }}" {% if form.account.value == account.pk %}selected{% endif %}>
+                        {{ account.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.account.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.account.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Contact -->
+        <div class="mb-4">
+            <label for="id_contact" class="block text-sm font-medium text-gray-700">Contact</label>
+            <select name="contact" id="id_contact"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select contact</option>
+                {% for contact in form.fields.contact.queryset %}
+                    <option value="{{ contact.pk }}" {% if form.contact.value == contact.pk %}selected{% endif %}>
+                        {{ contact.full_name }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.contact.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.contact.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Value -->
+        <div class="mb-4">
+            <label for="id_value" class="block text-sm font-medium text-gray-700">Value</label>
+            <input type="number" name="value" id="id_value" step="0.01"
+                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.value.value|default:'' }}">
+            {% if form.value.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.value.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Stage -->
+        <div class="mb-4">
+            <label for="id_stage" class="block text-sm font-medium text-gray-700">Stage</label>
+            <select name="stage" id="id_stage"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">
+                <option value="">Select stage</option>
+                {% for value, label in form.fields.stage.choices %}
+                    <option value="{{ value }}" {% if form.stage.value == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.stage.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.stage.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Expected Close Date -->
+        <div class="mb-4">
+            <label for="id_expected_close_date" class="block text-sm font-medium text-gray-700">Expected Close Date</label>
+            <input type="date" name="expected_close_date" id="id_expected_close_date"
+                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border"
+                   value="{{ form.expected_close_date.value|default:'' }}">
+            {% if form.expected_close_date.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.expected_close_date.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+            <label for="id_description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="id_description" rows="3"
+                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.description.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Submit & Cancel -->
+        <div class="mt-4 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'opportunity_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

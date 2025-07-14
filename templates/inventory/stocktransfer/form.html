@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
+
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
+</style>
+
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Stock Transfer{% else %}New Stock Transfer{% endif %}
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Product -->
+        <div class="mb-4">
+            <label for="id_product" class="block text-sm font-medium text-gray-700">Product</label>
+            <select name="product" id="id_product"
+                class="w-full border rounded-md px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                {% for product in form.fields.product.queryset %}
+                    <option value="{{ product.id }}" {% if form.product.value == product.id|stringformat:'s' %}selected{% endif %}>{{ product.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.product.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.product.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- From Warehouse -->
+        <div class="mb-4">
+            <label for="id_from_warehouse" class="block text-sm font-medium text-gray-700">From Warehouse</label>
+            <select name="from_warehouse" id="id_from_warehouse"
+                class="w-full border rounded-md px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                {% for warehouse in form.fields.from_warehouse.queryset %}
+                    <option value="{{ warehouse.id }}" {% if form.from_warehouse.value == warehouse.id|stringformat:'s' %}selected{% endif %}>{{ warehouse.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.from_warehouse.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.from_warehouse.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- To Warehouse -->
+        <div class="mb-4">
+            <label for="id_to_warehouse" class="block text-sm font-medium text-gray-700">To Warehouse</label>
+            <select name="to_warehouse" id="id_to_warehouse"
+                class="w-full border rounded-md px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                {% for warehouse in form.fields.to_warehouse.queryset %}
+                    <option value="{{ warehouse.id }}" {% if form.to_warehouse.value == warehouse.id|stringformat:'s' %}selected{% endif %}>{{ warehouse.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.to_warehouse.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.to_warehouse.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-4">
+            <label for="id_quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+            <input type="number" name="quantity" id="id_quantity"
+                class="w-full border rounded-md px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                value="{{ form.quantity.value|default:'' }}">
+            {% if form.quantity.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ form.quantity.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-6 flex justify-between">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'stocktransfer_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
