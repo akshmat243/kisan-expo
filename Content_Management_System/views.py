@@ -9,10 +9,12 @@ from MBP.permission import has_model_permission
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.utils.text import slugify
+from django.utils import timezone
+
 
 def page_detail_view(request, slug):
-    page = get_object_or_404(Page, slug=slug, is_published=True, publish_date__lte=now())
-    return render(request, f'CMS/pages/{page.template}', {'page': page})
+    page = get_object_or_404(Page, slug=slug, is_published=True, publish_date__lte=timezone.now())
+    return render(request, f'CMS/pages/default.html', {'page': page})
 
 @has_model_permission('Page', 'r')
 def page_list_view(request):
