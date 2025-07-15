@@ -6,25 +6,14 @@
         --danger: #ef4444;
     }
 
-    .btn-primary {
-        background-color: var(--primary);
-        transition: 0.2s ease;
-    }
+    .btn-primary { background-color: var(--primary); transition: 0.2s ease; }
+    .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
 
-    .btn-primary:hover {
-        background-color: #4338ca;
-        transform: translateY(-1px);
-    }
+    .btn-edit { background-color: #f59e0b; transition: 0.2s ease; }
+    .btn-edit:hover { background-color: #d97706; transform: translateY(-1px); }
 
-    .btn-delete {
-        background-color: var(--danger);
-        transition: 0.2s ease;
-    }
-
-    .btn-delete:hover {
-        background-color: #dc2626;
-        transform: translateY(-1px);
-    }
+    .btn-delete { background-color: var(--danger); transition: 0.2s ease; }
+    .btn-delete:hover { background-color: #dc2626; transform: translateY(-1px); }
 </style>
 
 <div class="container mx-auto px-4 py-8">
@@ -41,7 +30,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">#</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Title</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Slug URL</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">URL</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Publish Date</th>
                     <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600">Actions</th>
@@ -55,7 +44,7 @@
                     <td class="px-6 py-4 text-sm text-blue-600 underline">
                         {% if page.slug %}
                             <a href="{% url 'page_view' slug=page.slug %}" class="text-blue-600 underline" target="_blank">
-                                /pages/{{ page.slug }}
+                                http://127.0.0.1:8000/pages/{{ page.slug }}
                             </a>
                         {% endif %}
                     </td>
@@ -74,10 +63,12 @@
                         <a href="{% url 'page_edit' page.pk %}" class="btn-edit text-white px-3 py-1 rounded-md">Edit</a>
                         {% endif %}
                         {% if can_delete_page %}
+                        {% if page.slug not in protected_slugs %}
                         <form method="POST" action="{% url 'page_delete' page.pk %}" class="inline">
                             {% csrf_token %}
                             <button onclick="return confirm('Delete this page?');" class="btn-delete text-white px-3 py-1 rounded-md">Delete</button>
                         </form>
+                        {% endif %}
                         {% endif %}
                     </td>
                 </tr>

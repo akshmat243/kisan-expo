@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        transition: 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    .btn-delete {
+        background-color: var(--danger);
+        transition: 0.2s ease;
+    }
+
+    .btn-delete:hover {
+        background-color: #dc2626;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Image{% else %}Add Image{% endif %}
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Section -->
+        <div class="mb-4">
+            <label for="id_section" class="block text-sm font-medium text-gray-700">Section</label>
+            <select name="section" id="id_section"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">
+                {% for section in form.fields.section.queryset %}
+                    <option value="{{ section.pk }}" {% if section.pk == form.section.value %}selected{% endif %}>{{ section.title }}</option>
+                {% endfor %}
+            </select>
+            {% if form.section.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.section.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Image -->
+        <div class="mb-4">
+            <label for="id_image" class="block text-sm font-medium text-gray-700">Image</label>
+            <input type="file" name="image" id="id_image"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">
+            {% if form.image.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.image.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Caption -->
+        <div class="mb-4">
+            <label for="id_caption" class="block text-sm font-medium text-gray-700">Caption</label>
+            <input type="text" name="caption" id="id_caption"
+                value="{{ form.caption.value|default:'' }}"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">
+            {% if form.caption.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.caption.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Order -->
+        <div class="mb-4">
+            <label for="id_order" class="block text-sm font-medium text-gray-700">Order</label>
+            <input type="number" name="order" id="id_order"
+                value="{{ form.order.value|default:0 }}"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">
+            {% if form.order.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.order.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-between mt-6">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'image_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Page
+from .models import Page, Section, Image, Video, FAQ, Banner, Testimonial, MetaTag
 from ckeditor.widgets import CKEditorWidget
 
 class PageForm(forms.ModelForm):
@@ -30,3 +30,44 @@ class PageForm(forms.ModelForm):
                 'class': 'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border'
             }),
         }
+
+class SectionForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = ['page', 'title', 'content', 'order', 'section_type', 'is_active']
+
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['section', 'image', 'caption', 'order']
+
+
+class VideoForm(forms.ModelForm):
+    class Meta:
+        model = Video
+        fields = ['section', 'video_url', 'caption']
+
+
+class FAQForm(forms.ModelForm):
+    class Meta:
+        model = FAQ
+        fields = ['section', 'question', 'answer']
+
+
+class BannerForm(forms.ModelForm):
+    class Meta:
+        model = Banner
+        fields = ['title', 'subtitle', 'image', 'link', 'is_active', 'display_order']
+
+
+class TestimonialForm(forms.ModelForm):
+    class Meta:
+        model = Testimonial
+        fields = ['name', 'role', 'message', 'image']
+
+
+class MetaTagForm(forms.ModelForm):
+    class Meta:
+        model = MetaTag
+        fields = ['page', 'meta_title', 'meta_description', 'meta_keywords']

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-4 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">{{ form.instance.pk|yesno:"Edit Section,Create Section" }}</h1>
+
+    <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        {% csrf_token %}
+
+        <div class="mb-4">
+            <label for="id_page" class="block text-gray-700 text-sm font-bold mb-2">Page</label>
+            <select name="page" id="id_page" class="shadow border w-full py-2 px-3 text-gray-700 rounded">
+                {% for page in form.fields.page.queryset %}
+                    <option value="{{ page.id }}" {% if form.instance.page == page %}selected{% endif %}>{{ page.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="id_title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+            <input type="text" name="title" id="id_title" value="{{ form.title.value|default_if_none:'' }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+        </div>
+
+        <div class="mb-4">
+            <label for="id_section_type" class="block text-gray-700 text-sm font-bold mb-2">Section Type</label>
+            <select name="section_type" id="id_section_type" class="shadow border rounded w-full py-2 px-3 text-gray-700">
+                {% for value, label in form.fields.section_type.choices %}
+                    <option value="{{ value }}" {% if form.section_type.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="id_order" class="block text-gray-700 text-sm font-bold mb-2">Order</label>
+            <input type="number" name="order" id="id_order" value="{{ form.order.value|default_if_none:0 }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
+        </div>
+
+        <div class="mb-4">
+            <label for="id_content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
+            <textarea name="content" id="id_content" rows="3"
+            class="shadow w-full border rounded-md py-2 px-3">{{ form.content.value|default:'' }}</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="id_is_active" class="inline-flex items-center">
+                <input type="checkbox" name="is_active" id="id_is_active" class="form-checkbox h-5 w-5 text-blue-600" {% if form.is_active.value %}checked{% endif %}>
+                <span class="ml-2 text-gray-700">Is Active</span>
+            </label>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Save
+            </button>
+            <a href="{% url 'section_list' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

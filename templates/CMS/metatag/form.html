@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        transition: 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    .btn-delete {
+        background-color: var(--danger);
+        transition: 0.2s ease;
+    }
+
+    .btn-delete:hover {
+        background-color: #dc2626;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="max-w-2xl mx-auto mt-10 bg-white p-6 rounded-md shadow-md">
+    <h2 class="text-lg font-bold mb-4">
+        {% if form.instance.pk %}Edit Meta Tag{% else %}Add Meta Tag{% endif %}
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Page -->
+        <div class="mb-4">
+            <label for="id_page" class="block text-sm font-medium text-gray-700">Page</label>
+            <select name="page" id="id_page"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300" required>
+                {% for option in form.page.field.queryset %}
+                    <option value="{{ option.pk }}" {% if form.page.value|stringformat:"s" == option.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ option.title }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% if form.page.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.page.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Meta Title -->
+        <div class="mb-4">
+            <label for="id_meta_title" class="block text-sm font-medium text-gray-700">Meta Title</label>
+            <input type="text" name="meta_title" id="id_meta_title"
+                value="{{ form.meta_title.value|default:'' }}"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300" required>
+            {% if form.meta_title.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.meta_title.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Meta Description -->
+        <div class="mb-4">
+            <label for="id_meta_description" class="block text-sm font-medium text-gray-700">Meta Description</label>
+            <textarea name="meta_description" id="id_meta_description" rows="4"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">{{ form.meta_description.value|default:'' }}</textarea>
+            {% if form.meta_description.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.meta_description.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Meta Keywords -->
+        <div class="mb-4">
+            <label for="id_meta_keywords" class="block text-sm font-medium text-gray-700">Meta Keywords</label>
+            <input type="text" name="meta_keywords" id="id_meta_keywords"
+                value="{{ form.meta_keywords.value|default:'' }}"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 shadow-sm focus:ring focus:ring-indigo-300">
+            {% if form.meta_keywords.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ form.meta_keywords.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-between mt-6">
+            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-md">Save</button>
+            <a href="{% url 'metatag_list' %}" class="btn-delete text-white px-4 py-2 rounded-md">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

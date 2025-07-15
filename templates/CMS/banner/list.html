@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4f46e5;
+        --danger: #ef4444;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        transition: 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #4338ca;
+        transform: translateY(-1px);
+    }
+
+    .btn-edit {
+        background-color: #f59e0b;
+        transition: 0.2s ease;
+    }
+
+    .btn-edit:hover {
+        background-color: #d97706;
+        transform: translateY(-1px);
+    }
+
+    .btn-delete {
+        background-color: var(--danger);
+        transition: 0.2s ease;
+    }
+
+    .btn-delete:hover {
+        background-color: #dc2626;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800">Banners</h2>
+        {% if can_create_banner %}
+        <a href="{% url 'banner_create' %}" class="btn-primary text-white px-4 py-2 rounded-md">Add Banner</a>
+        {% endif %}
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">#</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Title</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Subtitle</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Image</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Link</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                    <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                {% for banner in page_obj %}
+                <tr>
+                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4 text-sm">{{ banner.title }}</td>
+                    <td class="px-6 py-4 text-sm">{{ banner.subtitle }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if banner.image %}
+                        <img src="{{ banner.image.url }}" class="w-16 h-auto rounded" alt="Banner Image">
+                        {% else %}
+                        <span class="text-gray-400">No Image</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if banner.link %}<a href="{{ banner.link }}" class="text-blue-600 underline" target="_blank">Visit</a>{% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if banner.is_active %}
+                        <span class="text-green-600 font-semibold">Active</span>
+                        {% else %}
+                        <span class="text-red-500 font-semibold">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right text-sm">
+                        {% if can_update_banner %}
+                        <a href="{% url 'banner_edit' banner.pk %}" class="btn-edit text-white px-3 py-1 rounded-md">Edit</a>
+                        {% endif %}
+                        {% if can_delete_banner %}
+                        <form method="POST" action="{% url 'banner_delete' banner.pk %}" class="inline">
+                            {% csrf_token %}
+                            <button onclick="return confirm('Delete this banner?');" class="btn-delete text-white px-3 py-1 rounded-md">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">No banners found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="px-4 py-3">
+            {% include 'Ecommerce/partials/pagination.html' with page_obj=page_obj %}
+        </div>
+    </div>
+</div>
+{% endblock %}

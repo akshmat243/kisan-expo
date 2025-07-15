@@ -25,6 +25,8 @@ def log_audit(user, action, instance, old_data=None, new_data=None, details="", 
 
 from django.db.models.fields.files import FieldFile
 from decimal import Decimal
+from datetime import timedelta
+
 
 def safe_model_to_dict(instance):
     data = model_to_dict(instance)
@@ -40,3 +42,6 @@ def safe_model_to_dict(instance):
         elif hasattr(value, 'pk'):
             data[key] = str(value.pk)
     return data
+
+def dev_time_now():
+    return timezone.now() + timedelta(hours=5, minutes=30)

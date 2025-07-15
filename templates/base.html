@@ -133,7 +133,38 @@
 {% has_perm request.user 'Page' 'c' as can_create_page %}
 {% has_perm request.user 'Page' 'u' as can_update_page %}
 {% has_perm request.user 'Page' 'd' as can_delete_page %}
-
+<!-- CMS Read -->
+{% has_perm request.user 'Section' 'r' as can_read_section %}
+{% has_perm request.user 'Image' 'r' as can_read_image %}
+{% has_perm request.user 'Video' 'r' as can_read_video %}
+{% has_perm request.user 'FAQ' 'r' as can_read_faq %}
+{% has_perm request.user 'Banner' 'r' as can_read_banner %}
+{% has_perm request.user 'Testimonial' 'r' as can_read_testimonial %}
+{% has_perm request.user 'MetaTag' 'r' as can_read_metatag %}
+<!-- CMS Create -->
+{% has_perm request.user 'Section' 'c' as can_create_section %}
+{% has_perm request.user 'Image' 'c' as can_create_image %}
+{% has_perm request.user 'Video' 'c' as can_create_video %}
+{% has_perm request.user 'FAQ' 'c' as can_create_faq %}
+{% has_perm request.user 'Banner' 'c' as can_create_banner %}
+{% has_perm request.user 'Testimonial' 'c' as can_create_testimonial %}
+{% has_perm request.user 'MetaTag' 'c' as can_create_metatag %}
+<!-- CMS Update -->
+{% has_perm request.user 'Section' 'u' as can_update_section %}
+{% has_perm request.user 'Image' 'u' as can_update_image %}
+{% has_perm request.user 'Video' 'u' as can_update_video %}
+{% has_perm request.user 'FAQ' 'u' as can_update_faq %}
+{% has_perm request.user 'Banner' 'u' as can_update_banner %}
+{% has_perm request.user 'Testimonial' 'u' as can_update_testimonial %}
+{% has_perm request.user 'MetaTag' 'u' as can_update_metatag %}
+<!-- CMS Delete -->
+{% has_perm request.user 'Section' 'd' as can_delete_section %}
+{% has_perm request.user 'Image' 'd' as can_delete_image %}
+{% has_perm request.user 'Video' 'd' as can_delete_video %}
+{% has_perm request.user 'FAQ' 'd' as can_delete_faq %}
+{% has_perm request.user 'Banner' 'd' as can_delete_banner %}
+{% has_perm request.user 'Testimonial' 'd' as can_delete_testimonial %}
+{% has_perm request.user 'MetaTag' 'd' as can_delete_metatag %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -430,7 +461,6 @@
                         {% endif %}
                     </ul>
                 </li>
-
                 <li x-data="{ open: {% if request.resolver_match.url_name|in_list:'warehouse_list,inventory_list,stocktransaction_list,stocktransfer_list' %}true{% else %}false{% endif %} }"
                     x-effect="if (sidebarCollapsed) open = false">
                     
@@ -671,19 +701,88 @@
                         {% endif %}
                     </ul>
                 </li>
-                {% if can_read_page %}
-                <li>
-                    <a href="{% url 'page_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
-                    {% if request.resolver_match.url_name == 'page_list' %}
-                        active shadow-lg
-                    {% else %}
-                        text-gray-600
-                    {% endif %}">
-                        <i class="sidebar-icon fas fa-file-alt text-gray-500 w-6 text-center"></i>
-                        <span class="sidebar-text ml-3" x-show="!sidebarCollapsed">Pages</span>
-                    </a>
+                <li x-data="{ open: {% if request.resolver_match.url_name|in_list:'page_list,section_list,image_list,video_list,faq_list,banner_list,testimonial_list,metatag_list' %}true{% else %}false{% endif %} }" 
+                    x-effect="if (sidebarCollapsed) open = false">
+
+                    <button @click="open = !open" class="flex items-center w-full py-3 px-4 text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition">
+                        <i class="fas fa-layer-group w-6 text-center text-gray-500"></i>
+                        <span x-show="!sidebarCollapsed" class="ml-3 flex-1 text-left">CMS</span>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down ml-auto text-xs transition-transform" :class="{'rotate-180': open}"></i>
+                    </button>
+
+                    <ul x-show="open" x-transition x-cloak class="ml-6 mt-2 space-y-1">
+                        {% if can_read_page %}
+                        <li>
+                            <a href="{% url 'page_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'page_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-file-alt w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Pages</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if can_read_section %}
+                        <li>
+                            <a href="{% url 'section_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'section_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-align-left w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Sections</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_image %}
+                        <li>
+                            <a href="{% url 'image_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'image_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-image w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Images</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_video %}
+                        <li>
+                            <a href="{% url 'video_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'video_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-video w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Videos</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_faq %}
+                        <li>
+                            <a href="{% url 'faq_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'faq_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-question-circle w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">FAQs</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_banner %}
+                        <li>
+                            <a href="{% url 'banner_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'banner_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-photo-video w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Banners</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_testimonial %}
+                        <li>
+                            <a href="{% url 'testimonial_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'testimonial_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-comments w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Testimonials</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% if can_read_metatag %}
+                        <li>
+                            <a href="{% url 'metatag_list' %}" class="sidebar-item flex items-center py-2 px-1 rounded-lg transition {% if request.resolver_match.url_name == 'metatag_list' %} bg-gray-200 text-black font-semibold {% else %} text-gray-600 hover:bg-gray-100 {% endif %}">
+                                <i class="fas fa-tags w-5 text-center text-gray-500"></i>
+                                <span class="ml-2" x-show="!sidebarCollapsed">Meta Tags</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </li>
-                {% endif %}
                 {% if can_read_logs %}
                 <li>
                     <a href="{% url 'audit_log_list' %}" class="sidebar-item flex items-center py-3 px-4 rounded-lg text-gray-600
