@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-tfp%bf2pqo9_ct_77i^=c6gkza_*w5&gp8f=^#f8b6t)ysm$gp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'kisan-expo.onrender.com'
+]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'  # required
 
